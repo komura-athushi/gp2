@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="templates/css/template.css">
+  </head>
+
+    <body>
+      <div id="box">
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+      </script>
+      <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+      </script>
+      <div class="title">
+        <h1>Action00_オブジェクトの配置</h1>
+      </div>
+      <div class="letter-body">
+        <ul>
+          <div>
+            <h3>この章で学ぶこと</h3>
+            <h5>・<span class="strong-letter">この教材の概要</span>
+                <br>・<span class="strong-letter">レベル</span>
+            </h5>
+          </div>
+          <li><h2 class="margin-letter">1. 概要</h2></li>
+          <div class="letter">
+            <div>
+              ゲームプログラミング1では、簡単なアクションゲームを制作しました。
+              <br>こちらの教材では、もっと複雑なアクションゲームを作っていこうと思います。
+              今回制作するゲームの完成品は、こちらになります。
+              <div class="video margin-letter">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/AGr3d1-wcCQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="margin-letter">
+                ゲームの大まかな流れとしては、プレイヤーを操作して敵を全て倒したらゲームクリアという感じです。
+                <br>また、ステージにはレバーやドアといったギミックが配置されています。
+                <br>それでは、Game.slnからVisual Studioプロジェクトを立ち上げて、実行してみてください。
+                <br>ゲームパッドの左スティックで移動、右スティックでカメラ回転、A、Y、Yボタンでプレイヤーが何らかの行動をします。
+              </div>
+              <div>
+                <img src="sprite/action1/2.png" class="margin-letter">
+                <img src="sprite/action1/1.png" class="margin-letter">
+              </div>
+              <div class="margin-letter">
+                このゲームの制作を通じて、<span class="strong-letter">レベル・AI・ステート・当たり判定・エフェクト・アニメーションイベント</span>などについて学んでいきたいと思います。
+              </div>
+            </div>
+            
+          </div>
+        </ul>
+      </div>
+    </body>
+
+</html>
