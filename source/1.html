@@ -65,7 +65,7 @@
               <br><a href="https://news.denfaminicogamer.jp/kikakuthetower/180801">レベルデザインの「レベル」って何だ？──ボックス、メイズ、パーセクにマウンテン!?　ゲームの「面」の呼びかたいろいろ 　　やる夫と学ぶ　ゲームが変えた日本語</a>
             </div>
           </div>
-          <li><h2 class="margin-letter">1.3 EnemyとBossの配置</h2></li>
+          <li><h2 class="margin-letter">1.3 Enemyの配置</h2></li>
           <div class="letter">
             <div>
               それでは、オブジェクトの配置を行っていきましょう。
@@ -87,6 +87,7 @@
               <div class="margin-letter">
                 <code>
                   <ol style="list-style:decimal-leading-zero outside;in-left:0;padding-left:36px;margin:0;background-color:#000;color:#FFF;">
+                  <li><font style="color:lightgreen;font-style:italic;">//Game.cpp/Game::Start()</font></li>
                   <li><font style="color:lightgreen;font-style:italic;">//レベルを構築する。</font></li>
                   <li>&nbsp;m_levelRender.Init(<font style="color:lightcoral;">"Assets/level3D/level.tkl"</font>,</li>
                   <li>&nbsp;&nbsp;&nbsp;&nbsp;[&amp;](LevelObjectData&amp; objData)</li>
@@ -142,7 +143,101 @@
               <div>
                 <img class="margin-letter" src="sprite/action1/12.png">
               </div>
-
+              <div class="margin-letter">
+                では、手始めに「Enemy」を配置してみましょう。
+                <br>先ほどの「tkExporter」の項目から、「Level」の「Load Object」→Assets/modelData/enemy/enemy.fbxを選択してください。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/13.png">
+                <br><img class="margin-letter" src="sprite/action1/14.png">
+              </div>
+              <div class="margin-letter">
+                そうすると、下記のように「Enemy」が読み込まれたと思います。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/15.png">
+              </div>
+              <div class="margin-letter">
+                では、「Enemy」をこの辺りの位置に移動させてみましょう。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/16.png">
+              </div>
+              <div class="margin-letter">
+                次に、配置データを出力しましょう。
+                <br>「Level」の「Save Level」→Assets/level3D/level.tklを選択して保存してください。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/17.png">
+                <br><img class="margin-letter" src="sprite/action1/18.png">
+              </div>
+              <div>
+                3dsmaxの配置データが、「level.tkl」に出力されました。
+                <br>次は、この配置データを実際に読み込んでみましょう。
+                <br>先ほど開いたGame.cppに下記のコードを追加してください。
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol style="list-style:decimal-leading-zero outside;in-left:0;padding-left:36px;margin:0;background-color:#000;color:#FFF;">
+                  <li><font style="color:lightgreen;font-style:italic;">//Game.cpp/Game::Start()</font></li>
+                  <li></li>
+                  <li><font style="color:lightgreen;font-style:italic;">//レベルを構築する。</font></li>
+                  <li>m_levelRender.Init(<font style="color:lightcoral;">"Assets/level3D/level.tkl"</font>,</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;[&amp;](LevelObjectData&amp; objData)</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//名前がhumanだったら。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;if(objData.EqualObjectName(L<font style="color:lightcoral;">"human"</font>) == true)</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーのオブジェクトを作成する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player = NewGO&lt;Player&gt;(0,<font style="color:lightcoral;">"player"</font>);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;SetPosition(objData.position);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;SetRotation(objData.rotation);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true; </li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//名前がbackgroundだったら。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;else if(objData.EqualObjectName(L<font style="color:lightcoral;">"background"</font>) == true)</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;{ </li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//背景オブジェクトを作成する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background = NewGO&lt;BackGround&gt;(0, <font style="color:lightcoral;">"background"</font>);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background-&gt;SetPosition(objData.position);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//大きさを設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background-&gt;SetScale(objData.scale);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background-&gt;SetRotation(objData.rotation);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//名前がenemyだったら。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">else if(objData.EqualObjectName(L<font style="color:lightcoral;">"enemy"</font>) == true)</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">{</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//エネミーのオブジェクトを作成する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">Enemy* enemy = NewGO&lt;Enemy&gt;(0, <font style="color:lightcoral;">"enemy"</font>);</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">enemy-&gt;SetPosition(objData.position);</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">enemy-&gt;SetRotation(objData.rotation);</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPを5に設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">enemy-&gt;SetHP(5);</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//作成したエネミーの和を数えたいので、+1する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">m_numEnemy++;</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">return true;</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;border-bottom:solid 1px red;font-weight:bold;">}</span></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                  <li>});</li>
+                  </ol></code>
+              </div>
+              <div class="margin-letter"> 
+                出来たら、実行してみてください。下記のように「Enemy」が表示されていれば、成功です。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/19.png">
+              </div>
+              <div class="margin-letter">
+                では次に、「Enemy」を複数配置してみましょう。
+              </div>
             </div>
           </div>
         </ul>
