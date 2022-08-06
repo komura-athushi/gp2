@@ -1,3 +1,7 @@
+.background-color{
+    background-color: #fffaf0;
+}
+
 .link-font1{
     font-size: 1.5rem;
 }
@@ -19,10 +23,11 @@
     margin-right: 5%;
     display: flex;
     justify-content: center;
+    flex-wrap: nowrap;
 }
 
 .margin-letter{
-    margin-top: 3%;
+    margin-top: 2%;
 }
 
 .letter{
@@ -30,7 +35,7 @@
     margin-left: 1%;
     font-size: 1.2rem;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 @media (min-width: 770px){
