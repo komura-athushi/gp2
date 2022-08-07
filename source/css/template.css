@@ -1,3 +1,17 @@
+html {
+    font-size: 70.0%;
+}
+
+@media (min-width: 770px){
+    html{
+        font-size: 100%;
+    }
+    .letter-body{
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+}
+
 .background-color{
     background-color: #fffaf0;
 }
@@ -19,8 +33,8 @@
 
 .letter-body{
     margin-top: 5%;
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-left: 3%;
+    margin-right: 3%;
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
@@ -36,13 +50,6 @@
     font-size: 1.2rem;
     display: flex;
     justify-content: flex-start;
-}
-
-@media (min-width: 770px){
-    .letter-body{
-        margin-left: 15%;
-        margin-right: 15%;
-    }
 }
 
 .video {
@@ -67,5 +74,13 @@
 img {
     max-width: 80%;
     height: auto;
+}
+
+.code-region{
+    list-style:decimal-leading-zero outside;
+    padding-left: 40px;
+    margin:0;
+    background-color:#000;
+    color:#FFF;
 }
 
