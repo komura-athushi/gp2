@@ -25,9 +25,12 @@
         <ul>
           <div>
             <h3>この章で学ぶこと</h3>
-            <h5>・<span class="strong-letter">教材の概要</span>
-                <br>・<span class="strong-letter">レベルについて</span>
-                <br>・<span class="strong-letter">オブジェクトの配置</span>
+            <h5>
+              <ul><li><span class="strong-letter">教材の概要</span></li>
+                <li><span class="strong-letter">レベルについて</span></li>
+                <li><span class="strong-letter">オブジェクトの配置</span></li>
+                <li><span class="strong-letter">ラムダ式(上級者向け)</span></li>
+              </ul>
             </h5>
           </div>
           <li><h2 class="margin-letter">1.1 概要</h2></li>
@@ -234,16 +237,197 @@
                 
               </div>
               <div class="margin-letter"> 
-                出来たら、実行してみてください。下記のように「Enemy」が表示されていれば、成功です。
+                出来たら、実行してみてください。下記のように「Enemy」が表示されているでしょうか。
               </div>
               <div>
                 <img class="margin-letter" src="sprite/action1/19.png">
               </div>
               <div class="margin-letter">
                 では次に、「Enemy」を複数配置してみましょう。
+                <br>3dsmaxに戻って、先ほど配置した「Enemy」を選択してください。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/20.png">
+              </div>
+              <div clas="margin-letter">
+                そうしたら、「Level」の「Copy Object」を選択してください。
+                <br>すると、「Enemy」が2つに増えていると思います。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/21.png">
+                <br><img class="margin-letter" src="sprite/action1/22.png">
+              </div>
+              <div class="margin-letter">
+                では、この機能を使用して、「Enemy」を複数体配置してみましょう。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/23.png">
+              </div>
+              <div class="margin-letter">
+                配置し終えたら、「Save level」で「level.tkl」ファイルに保存して、ゲームを実行してみてください。
+                <br>以下のように、「Enemy」が複数体表示されているでしょうか。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/24.png">
+              </div>
+              <div class="margin-letter">
+                ところで、先ほど配置した「Enemy」ですが、どれも同じ方向を向いていて不自然ではないでしょうか。
+                <br>3dsmaxで「Enemy」の方向を修正しましょう。
+                <br>修正したら、「level.tkl」ファイルに保存をして、実行してみてください。
+              </div>
+              <div>
+                <img class="margin-letter" src="sprite/action1/25.png">
+                <br><img class="margin-letter" src="sprite/action1/27.png">
+                <br><img class="margin-letter" src="sprite/action1/24.png">
+              </div>
+              <div class="margin-letter">
+                これにて、「Enemy」の配置は終了です。
+                <br>最後に、「Boss」の配置を行っていきます。
               </div>
             </div>
           </div>
+          <li><h2 class="margin-letter">1.4 Bossの配置</h2></li>
+            <div class="letter">
+            <div>
+              それでは最後に、「Boss」の配置を行っていきましょう。
+              <br>「Enemy」を読み込んだ時と同じように、Assets/modelData/boss/boss.fbxを読み込んで配置してください。
+            
+            <div>
+              <img class="margin-letter" src="sprite/action1/29.png">
+              <br><img class="margin-letter" src="sprite/action1/30.png">
+            </div>
+            <div class="margin-letter">
+              配置したら、「level.tkl」ファイルに保存をしましょう。
+            </div>
+            <div class="margin-letter">
+              次に、Game.cppに「Boss」を読み込んで配置するプログラムを追加しましょう。
+              <br>Game.cppに下記のコードを追加してください。
+            </div>
+            <div class="margin-letter">
+              <code>
+                <ol class="code-region row col-11">
+                <li><font style="color:lightgreen;font-style:italic;">//Game.cpp/Game::Start()</font></li>
+                <li></li>
+                <li><font style="color:lightgreen;font-style:italic;">//レベルを構築する。</font></li>
+                <li>m_levelRender.Init(<font style="color:lightcoral;">"Assets/level3D/level.tkl"</font>,</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;[&amp;](LevelObjectData&amp; objData)</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//名前がhumanだったら。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;if(objData.EqualObjectName(L<font style="color:lightcoral;">"human"</font>) == true)</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーのオブジェクトを作成する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player = NewGO&lt;Player&gt;(0,<font style="color:lightcoral;">"player"</font>);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;SetPosition(objData.position);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;SetRotation(objData.rotation);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true; </li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//名前がbackgroundだったら。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;else if(objData.EqualObjectName(L<font style="color:lightcoral;">"background"</font>) == true)</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//背景オブジェクトを作成する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background = NewGO&lt;BackGround&gt;(0, <font style="color:lightcoral;">"background"</font>);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background-&gt;SetPosition(objData.position);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//大きさを設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background-&gt;SetScale(objData.scale);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_background-&gt;SetRotation(objData.rotation);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//名前がenemyだったら。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;else if(objData.EqualObjectName(L<font style="color:lightcoral;">"enemy"</font>) == true)</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//エネミーのオブジェクトを作成する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enemy* enemy = NewGO&lt;Enemy&gt;(0, <font style="color:lightcoral;">"enemy"</font>);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enemy-&gt;SetPosition(objData.position);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enemy-&gt;SetRotation(objData.rotation);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPを5に設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enemy-&gt;SetHP(5);</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//作成したエネミーの和を数えたいので、+1する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_numEnemy++;</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//名前がbossだったら。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else if(objData.EqualObjectName(L<font style="color:lightcoral;">"boss"</font>) == true)</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ボスのオブジェクトを作成する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Boss* boss = NewGO&lt;Boss&gt;(0, <font style="color:lightcoral;">"boss"</font>);</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">boss-&gt;SetPosition(objData.position);</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">boss-&gt;SetRotation(objData.rotation);</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ボスのHPは高めに設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPを15に設定する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">boss-&gt;SetHP(15);</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//作成したエネミーの和を数えたいので、+1する。</font></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_numEnemy++;</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return true;</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                <li>});</li>
+                </ol>
+              </code>
+            </div>
+            <div class="margin-letter">
+              出来たら、ゲームを実行してみてください。「Boss」が表示されているでしょうか。
+            </div>
+            <div>
+              <img class="margin-letter" src="sprite/action1/31.png">
+            </div>
+            <div class="margin-letter">
+              以上で、第一章は終了となります。
+              <br>次章では、「Door」と「Lever」の配置を行っていきます。
+            </div>
+            </div>
+            </div>
+          <li><h2 class="margin-letter">まとめ</h2></li>
+          <div class="letter">
+            <div>
+              <ul>
+                <li>レベルとは、「面」の事である。</li>
+                <li>オブジェクトの配置手順</li>
+                <ol>
+                  <li>3dsmaxでオブジェクトを配置。</li>
+                  <li>tklファイルに配置情報を出力。</li>
+                  <li>C++側で配置情報を読み込む。</li>
+                </ol>
+              </ul>
+            </div>
+          </div>
+          <li><h2 class="margin-letter">Tips ラムダ式</h2></li>
+            <div class="letter">
+              <div>
+              今回、C++でプログラムを書くにあたり、見慣れないコードが見受けられたと思います。
+                <div>
+                  <code>
+                    <ol class="code-region row col-11">
+                    <li>m_levelRender.Init(<font style="color:lightcoral;">"Assets/level3D/level.tkl"</font>,</li>
+                    <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">[&amp;](LevelObjectData&amp; objData)</span></li>
+                    <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                    <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//以下省略</font></li>
+                    <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                    <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span>);</li>
+                    </ol></code>
+                </div>
+                <div class="margin-letter">
+                  この部分は一体何をしているのでしょうか。
+                  <br>実は、<span class="strong-letter">関数の引数に「関数」を設定</span>しているのです。
+                  <br>設定した関数は、エンジン側で実行されます。この際、「Enemy」や「Boss」を配置するプログラムが実行されるというワケです。
+                </div>
+                <div class="margin-letter">
+                  ところで、<span class="strong-letter">[&]</span>というコードに疑問と持った学生がいるのではないでしょうか。
+                  <br>これは、<span class="strong-letter">ラムダ式</span>を使用しています。ラムダ式を使用すれば、簡単に関数オブジェクトを作成することができます。
+                  <br>ラムダ式は今回のように、使いまわす必要の無い、一カ所だけでしか使用しないような関数を作成する時に使用されます。
+                  <br>尚、ラムダ式ならではの利点もあります。それは、<span class="strong-letter">関数を作成する際の環境の保持が可能</span>という点です。これは、通常の関数オブジェクトには無い利点です。
+                  <br>詳しく知りたい方は、こちらのサイトを参照してください。(正直よくわかりません)
+                  <br><a href="https://teratail.com/questions/110961">https://teratail.com/questions/110961</a>
+                </div>
+              </div>
+            </div>
         </ul>
       </div>
     </body>

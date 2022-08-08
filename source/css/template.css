@@ -2,15 +2,26 @@ html {
     font-size: 70.0%;
 }
 
-@media (min-width: 770px){
+@media (min-width: 650px){
+    html{
+        font-size: 90%;
+    }
+    .letter-body{
+        margin-left: 10% !important;
+        margin-right: 10% !important;
+    }
+}
+
+@media (min-width: 1100px){
     html{
         font-size: 100%;
     }
     .letter-body{
-        margin-left: 15%;
-        margin-right: 15%;
+        margin-left: 20% !important;
+        margin-right: 20% !important;
     }
 }
+
 
 .background-color{
     background-color: #fffaf0;
@@ -82,5 +93,6 @@ img {
     margin:0;
     background-color:#000;
     color:#FFF;
+    max-width: 100%;
 }
 
