@@ -101,3 +101,7 @@ img {
     justify-content: center!important;
     align-items: center!important;
 }
+
+.margin-left{
+    margin-left: 10%;
+}
