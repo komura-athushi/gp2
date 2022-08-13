@@ -31,7 +31,8 @@
                     <li><span class="strong-letter">ForwardMatchName</span></li>
                     <li><span class="strong-letter">番号設定</span></li>
                     <li><span class="strong-letter">型推論(上級者向け)</span></li>
-                    <li><span class="strong-letter">C++標準ライブラリ リストクラス(上級者向け)</span></li>
+                    <li><span class="strong-letter">stringクラス(上級者向け)</span></li>
+                    <li><span class="strong-letter">可変長配列について(上級者向け)</span></li>
                   </ul>
                 </h5>
             </div>
@@ -50,7 +51,7 @@
                     </div>
                     <div>
                         <img src="sprite/action2/3.png" class="margin-letter">
-                        <img src="sprite/action2/4.png" class="margin-letter">
+                        <br><img src="sprite/action2/4.png" class="margin-letter">
                     </div>
                     <div class="margin-letter">
                         出来たら、level.tklファイルに保存してください。
@@ -125,10 +126,227 @@
                 </div>
             </div>
             <li id="2"><h2 class="margin-letter">2.2 Doorの配置</h2></li>
+            <div class="letter">
+                <div>
+                    続いて、「Door」の配置を行っていきます。
+                    <br>「Door」のモデルは、Assets/modelData/doorのdoor.fbxです。
+                    <br>「Lever」が手前になるように配置してください。
+                    <div>
+                        <img src="sprite/action2/7.png" class="margin-letter">
+                        <br><img src="sprite/action2/8.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        出来たら、level.tklファイルに保存してGame.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Game.cpp/Game::Start()</font></li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//名前がleverだったら。</font></li>
+                            <li>else if(objData.EqualObjectName(L<font style="color:lightcoral;">"lever"</font>) == true)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//レバーのオブジェクトを作成する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;auto lever = NewGO&lt;Lever&gt;(0,<font style="color:lightcoral;">"lever"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;lever-&gt;SetPosition(objData.position);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//大きさを設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;lever-&gt;SetScale(objData.scale); </li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;lever-&gt;SetRotation(objData.rotation);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//レバーの配列に作成したオブジェクトを加える。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_leverVector.push_back(lever);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>} </li>
+                            <li><font style="color:lightgreen;font-style:italic;">//名前がdoorだったら。</font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else if(objData.EqualObjectName(L<font style="color:lightcoral;">"door"</font>) == true)</span></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ドアのオブジェクトを作成する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">auto door = NewGO&lt;Door&gt;(0, <font style="color:lightcoral;">"door"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">door-&gt;SetPosition(objData.position);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//大きさを設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">door-&gt;SetScale(objData.scale);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">door-&gt;SetRotation(objData.rotation);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ドアの配列に作成したオブジェクトを加える。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_doorVector.push_back(door);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return true;</span></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span>    </li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>});</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        出来たら、実行してみてください。
+                        <br>「Door」がキチンと表示されているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action2/9.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
             <li id="3"><h2 class="margin-letter">2.3 LeverとDoorの紐づけ</h2></li>
+            <div class="letter">
+                <div>
+                    ここまで、「Lever」と「Door」の配置を行ってきました。
+                    <br>このまま、「Lever」を操作した際に、「Door」が開閉する処理を実装したい所ですが、1つ問題があります。
+                    <span class="strong-letter">「Lever」を操作した際に、どの「Door」を開閉すればいいのか</span>という問題です。
+                    <br>距離で判断するなど色々な方法がありますが、今回はtkExporterとk2Engineの機能を使用して、それぞれのオブジェクトに番号を振る方法で実装していきましょう。
+                    <div>
+                        <img src="sprite/action2/11_2.png" class="margin-letter">
+                        <br><img src="sprite/action2/12_2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        k2Engineでは、<span class="strong-letter">3dsmaxのオブジェクト名の内、「@より後ろの数値」を名前とは別に取得する機能</span>があります。
+                        この機能を利用しましょう。
+                        <br>では、対応する「Lever」と「Door」に「door@1」という風に番号を振ってみましょう。
+                    </div>
+                    <div>
+                        <img src="sprite/action2/15.png">
+                        <br><img src="sprite/action2/16.png"><img src="sprite/action2/17.png">
+                    </div>
+                    <div class="margin-letter">
+                        番号を振ったら、level.tklファイルとstage.maxファイルの保存をしてください。
+                        <br>以上で、3dsmax側の操作は終了です。続いて、3dsmax側で設定した数値を読み込んでいきます。
+                        <br>では、ゲームを一度実行してみましょう。そうすると、「Door」と「Lever」が一切表示されないと思います。
+                        これは何故でしょうか。
+                    </div>
+                    <div class="margin-letter"> 
+                        これは、<span class="strong-letter">「if(objData.EqualObjectName(L"lever") == true)」</span>
+                        という部分のプログラムに問題があります。
+                        <br>この、<span class="strong-letter">EqualObjectName()</span>という関数ですが、<span class="strong-letter">引数に設定した名前と完全一致の場合のみ、trueを返し</span>ます。
+                        <br>先ほど、「Door」や「Lever」の名前に@〇を付けました。なので、lever@1とleverを比較し、<span class="strong-letter">完全一致はしていない</span>のでfalseが帰り、<span class="margin-letter">if文の中の処理が実行されない</span>ということが起きてしまっています。
+                        <br>では、どうすればよいでしょうか。
+                    </div>
+                    <div >
+                        <img src="sprite/action2/24_2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        k2Engineでは、このような事態を避けるために、<span class="strong-letter">ForwardMatchName()</span>という関数が存在します。
+                        <br>この関数は、<span class="strong-letter">引数に設定した名前と部分一致した場合、trueを返し</span>ます。
+                        <br>これがどういうことかというと、<span class="strong-letter">オブジェクトの名前に引数で設定した名前が含まれてさえいれば、trueを返す</span>ということです。
+                        <br>この関数を使えば、例えば@が含まれていてもオブジェクトを配置することが出来ますね。
+                        <br>では、「EqualObjectName」の部分を「ForwardMatchName」に置き換えましょう。
+                    </div>
+                    <div class="margin-letter">
+                        <img src="sprite/action2/25_2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Game.cpp/Game::Start()</font></li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//名前がleverだったら。</font></li>
+                            <li>else if(objData.<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">ForwardMatchName</span>(L<font style="color:lightcoral;">"lever"</font>) == true)</li>
+                            <font style="color:lightgreen;font-style:italic;">//以下省略</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//名前がdoorだったら。</font></li>
+                            <li>else if(objData.<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">ForwardMatchName</span>(L<font style="color:lightcoral;">"door"</font>) == true)</span></li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        出来たら、実行してみましょう。「Lever」と「Door」が表示されているでしょうか。
+                        <br>では最後に、番号の振り分けをして、第二章を締めくくろうと思います。
+                        <br>Game.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Game.cpp/Game::Start()</font></li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//名前がleverだったら。</font></li>
+                            <li>else if(objData.ForwardMatchName(L<font style="color:lightcoral;">"lever"</font>) == true)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//レバーのオブジェクトを作成する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;auto lever = NewGO&lt;Lever&gt;(0,<font style="color:lightcoral;">"lever"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;lever-&gt;SetPosition(objData.position);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//大きさを設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;lever-&gt;SetScale(objData.scale); </li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;lever-&gt;SetRotation(objData.rotation);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//レバーの配列に作成したオブジェクトを加える。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_leverVector.push_back(lever);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//レバーに番号を振る。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">lever->SetLeverNumber(objData.number);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>} </li>
+                            <li><font style="color:lightgreen;font-style:italic;">//名前がdoorだったら。</font></li>
+                            <li>else if(objData.ForwardMatchName(L<font style="color:lightcoral;">"door"</font>) == true)</span></li>
+                            <li>{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ドアのオブジェクトを作成する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;auto door = NewGO&lt;Door&gt;(0, <font style="color:lightcoral;">"door"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;door-&gt;SetPosition(objData.position);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//大きさを設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;door-&gt;SetScale(objData.scale);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;door-&gt;SetRotation(objData.rotation);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ドアの配列に作成したオブジェクトを加える。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_doorVector.push_back(door);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ドアに番号を振る。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">door->SetLeverNumber(objData.number);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</span></li>
+                            <li>}</span>    </li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>});</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        以上で、第二章は終了となります。
+                        <br>次章からは、本格的にプログラムを書いていきます。
+                    </div>
+                </div>
+            </div>
             <li id="4"><h2 class="margin-letter">2.4 まとめ</h2></li>
+            <div class="letter">
+                <div>
+                    <ul>
+                        <li>EqualObjectName関数は完全一致</li>
+                        <li>ForwardMatchName関数は完全一致</li>
+                        <li>k2Engineでは、3dsmaxで設定した名前の内、@より後ろの数値を取得できる。</li>
+                    </ul>
+                </div>
+            </div>
             <li id="5"><h2 class="margin-letter">Tips 型推論</h2></li>
+            <div class="letter">
+                <div>
+                    上記のコードで、「auto lever = NewGO...」という部分がありました。
+                    <br>この<span class="strong-letter">「auto」</span>ではどういうものなのでしょうか。
+                    <br>これは、<span class="strong-letter">型推論</span>と呼ばれるものです。変数に代入される値を元に、<span>コンパイラが型を自動で決定</span>してくれるものです。
+                    <br>変数の型が右辺の値によって明確である時や、型が重要でない時、型が一定ではない時は使用していくと良いでしょう。
+                    <br>詳しくは、こちらの記事を参照してください。
+                    <br><a href="https://uchan.hateblo.jp/entry/2019/02/22/105622">C++ autoの使いどころ・使わない方が良い場面</a>
+                </div>
+            </div>
+            <li id="6"><h2 class="margin-letter">Tips C++標準ライブラリ Stringクラス</h2></li>
+            <div class="letter">
+                <div>
+                    文字列の話が出たので、こちらを紹介しておきます。
+                    <br>C++では、文字は「char」で扱うと勉強しましたが、なかなか扱いづらいと思った学生も居たと思います。
+                    <br>そんな時は、C++標準ライブラリの<span class="strong-letter">「Stringクラス」</span>を使用しましょう。
+                    <br>char型では、文字列を扱う際に配列にしなければいけないなど面倒だと思います。しかしStringクラスでは、「String text="aiueo";」のように簡単に文字列を作成することができます。
+                    <br>また、Stringクラスには、文字列を扱うための豊富な関数が用意されています(文字数、挿入、削除など)。
+                    <br>文字列を扱う時は、是非Stringクラスを使用してみては如何でしょうか。k2Engineでも多用しています。
+                    <br><a href="https://code-database.com/knowledges/104">【C++】C++の文字列操作(std::stringクラス)について解説</a>
+                </div>
+            </div>
             <li id="6"><h2 class="margin-letter">Tips C++標準ライブラリ リストクラス</h2></li>
+            <div class="letter">
+                <div>
+                    上記のコードで、「m_doorVector.push_back(door);」という部分がありました。
+                    <br>これは配列に要素を追加しているコードなのですが、配列の長さは固定であると勉強したと思います。では何故、このようなことが可能なのでしょうか。
+                    <br>それは、<span class="strong-letter">可変長配列</span>と呼ばれるものを使用しているからです。
+                    この可変長配列では、配列の長さは固定ではなく要素の追加、削除が可能です。
+                    <br>C++では、標準ライブラリの「listクラス」と「vectorクラス」がこれに当たります(他にもあります)。ゲーム内で要素数が変化する配列を作成しなければいけない場合、この可変長配列を利用してみましょう。
+                    <br><a href="https://qiita.com/ysuzuki19/items/df872d91c9c89cc31aee">C++のvectorまとめ</a>
+                    <br>この、「listクラス」と「vectorクラス」、似ているようで内部の処理は全然違うので、興味のある学生は調べてみてもいいかもしれませんね。
+                    <br>ざっくりいうと、<span class="strong-letter">配列のとある要素に対するアクセス速度はvectorクラス&gt;listクラス</span>、<span class="strong-letter">要素の追加・削除の速度はlistクラス&gt;vectorクラス</span>です。
+                    <br>配列の長さが短い、要素の追加・削除が頻繁に行われる→listクラス
+                    <br>配列の長さが長い、要素の追加・削除があまり行われない→vectorクラス
+                    <br><a href="https://cu-atsu.hatenadiary.org/entry/20110521/1305978324">基本　その２『ListとVectorの違い』</a>
+                </div>
+            </div>
         </ul>
     </div>
   </body>
