@@ -33,3 +33,5 @@ function displayTableContents(ele,parent)
        
     }
 }
+
+document.body.classList.add('background-color');
