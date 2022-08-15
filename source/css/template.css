@@ -105,3 +105,20 @@ img {
 .margin-left{
     margin-left: 10%;
 }
+
+
+.question-group{
+    padding: 0.5rem;
+    border: solid!important;
+    border-color: black!important;
+
+}
+
+.correct-answer
+{
+    background-color:#99FF99;
+}
+.error-answer
+{
+    background-color:#FF9999;
+}
