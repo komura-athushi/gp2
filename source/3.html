@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 第二章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+<body>
+    <div id="box">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+    </script>
+    <div class="title">
+        <h1>第三章 Leverの実装</h1>
+    </div>
+    <div class="letter-body">
+        <ul id="list1">
+            <div>
+                <h3>この章で学ぶこと</h3>
+                <h5>
+                  <ul><li><span class="strong-letter">CollisionObject(当たり判定用クラス)</span></li>
+                    <li><span class="strong-letter">bulletphysics(上級者向け)</span></li>
+                  </ul>
+                </h5>
+            </div>
+            <li id="1"><h2 class="margin-letter">3.1 ステート(状態)</h2></li>
+            <div class="letter">
+                <div>
+                    早速、プログラミングをしていきたい所ではありますが、その前にステートについて解説します。
+                    <br>このゲームプログラミング２のサンプルゲームでは、各クラスごとにステート(状態)が設定されています。
+                    <br>このステートを遷移させることにより、各クラスの動きを制御していきます。このことを年頭に置いておいてください。
+                    <br>実際のゲーム制作でも、bool変数で状態を管理するよりも、enum型などで状態を管理した方が良い場合があります。
+                </div>
+            </div>
+            <li id="2"><h2 class="margin-letter">3.2 CollisionObject</h2></li>
+            <li id="3"><h2 class="margin-letter">3.3 PlayerのCollisionObject</h2></li>
+            <li id="3"><h2 class="margin-letter">3.4 LeverのCollisionObject</h2></li>
+            <li id="3"><h2 class="margin-letter">3.5 Tips bulletPhysics(上級者向け)</h2></li>
+        </ul>
+    </div>
+</body>
+</html>
