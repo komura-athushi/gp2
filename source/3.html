@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ゲームプログラミング2 第二章</title>
+    <title>ゲームプログラミング2 第章</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link rel="stylesheet" href="css/template.css">
     <script src="template.js"></script>
@@ -22,7 +22,7 @@
     <div class="title">
         <h1>第三章 Leverの実装</h1>
     </div>
-    <div class="letter-body">
+    <d  iv class="letter-body">
         <ul id="list1">
             <div>
                 <h3>この章で学ぶこと</h3>
@@ -32,19 +32,377 @@
                   </ul>
                 </h5>
             </div>
-            <li id="1"><h2 class="margin-letter">3.1 ステート(状態)</h2></li>
+            <li id="1"><h2 class="margin-letter2">3.1 ステート(状態)</h2></li>
             <div class="letter">
                 <div>
                     早速、プログラミングをしていきたい所ではありますが、その前にステートについて解説します。
                     <br>このゲームプログラミング２のサンプルゲームでは、各クラスごとにステート(状態)が設定されています。
-                    <br>このステートを遷移させることにより、各クラスの動きを制御していきます。このことを年頭に置いておいてください。
-                    <br>実際のゲーム制作でも、bool変数で状態を管理するよりも、enum型などで状態を管理した方が良い場合があります。
+                    <div>
+                        <img src="sprite/action3/2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        この<span class="strong-letter">ステートを遷移させることにより、各クラスの動きを制御</span>していきます。このことを年頭に置いておいてください。
+                        <br>実際のゲーム制作でも、bool変数で状態を管理するよりも、enum型などで状態を管理した方が良い場合があります。
+                    </div>
                 </div>
             </div>
-            <li id="2"><h2 class="margin-letter">3.2 CollisionObject</h2></li>
-            <li id="3"><h2 class="margin-letter">3.3 PlayerのCollisionObject</h2></li>
-            <li id="3"><h2 class="margin-letter">3.4 LeverのCollisionObject</h2></li>
-            <li id="3"><h2 class="margin-letter">3.5 Tips bulletPhysics(上級者向け)</h2></li>
+            <li id="2"><h2 class="margin-letter2">3.2 CollisionObject</h2></li>
+            <div class="letter">
+                <div>
+                    k2Engineには、「CollisionObject」という当たり判定をとるようのクラスが用意されています。
+                    <br>「PhysicsStaticObject」は貫通しない当たり判定でしたが、「CollisionObject」は貫通する当たり判定です。
+                    <br>今回はこの「CollisionObject」を使用して、「Lever」を動かすように実装したいと思います。
+                    <div>
+                        <img src="sprite/action3/1_1.png" class="margin-letter">
+                        <img src="sprite/action3/3_1.png" class="margin-letter">
+                        <img src="sprite/action3/4_1.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="3"><h2 class="margin-letter2">3.3 PlayerのCollisionObject</h2></li>
+            <div class="letter">
+                <div>
+                    それでは、<span class="strong-letter">「Player」がレバーを押すアニメーションをした時に、「CollisionObject」を発生</span>させるようにしてみましょう。
+                    では、Player.cppに下記のコードを追加してください。
+                    <div class="margin-letter">
+                        
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp</font></li></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"stdafx.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"Player.h"</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"Game.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"FireBall.h"</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundEngine.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundSource.h"</font></li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//CollisionObjectを使用するために、ファイルをインクルードする。</font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">#include <font style="color:lightcoral;">"collision/CollisionObject.h"</font></span></li>
+                            </ol></code>
+                        
+                    </div>
+                    <div class="margin-letter">
+                        
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::MakePushLeverCollision()</font></li></li>
+                            <li></li>
+                            <li>void Player::MakePushLeverCollision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">CollisionObject* collisionObject = NewGO&lt;CollisionObject&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 collisionPosition = m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標をプレイヤーの少し前に設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionPosition += m_forward * 50.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//球状のコリジョンを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;CreateSphere(collisionPosition,       <font style="color:lightgreen;font-style:italic;">//座標。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Quaternion::Identity,                                  <font style="color:lightgreen;font-style:italic;">//回転。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">70.0f);                                                <font style="color:lightgreen;font-style:italic;">//球の大きさ(半径)。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//名前を付ける。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;SetName(<font style="color:lightcoral;">"player_lever"</font>);</span></li>
+                            <li>}</li>
+                            </ol></code>
+                        
+                    </div>
+                    <div class="margin-letter">
+                        この、「MakeLeverCollision関数」は、レバーを押すアニメーションが再生されるときに、呼ばれています。
+                    </div>
+                    <div>
+                        <img src="sprite/action3/6.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        できたら、Visual Studioのソリューション構成をDebugにして実行してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action3/7.png" class="margin-letter"> 
+                    </div>
+                    <div class="margin-letter">
+                        Aボタンを押したときに、「Player」の前に当たり判定が発生されているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action3/8.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="4"><h2 class="margin-letter2">3.4 LeverのCollisionObject</h2></li>
+            <div class="letter">
+                <div>
+                    では、続いて「Lever」側の「CollisionObject」の発生の実装をしていきます。
+                    <br>「Lever」の「CollisionObject」は、<span class="strong-letter">「Lever」が存在している間、常に存在</span>させておきたいので、<span class="strong-letter">「CollisionObject」をメンバ変数</span>にします。
+                    <br>Lever.h、Lever.cppそれぞれに下記のコードを追加してください。
+                    <div class="margin-letter">
+                        
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Lever.h</font></li>
+                            <li></li>
+                            <li>#pragma once</li>
+                            <li></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//クラス宣言。</span></font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">class CollisionObject;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li><font style="color:lightgreen;font-style:italic;">///&lt;summary&gt;</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">///レバー。</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">///&lt;summary&gt;</font></li>
+                            <li>class Lever : public IGameObject</li>
+                            <li>{</li>
+                            <li>public:</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">///&lt;summary&gt;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">///レバーステート。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">///&lt;summary&gt;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;enum EnLeverState {</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>int                     m_leverNumber = 0;              <font style="color:lightgreen;font-style:italic;">//レバーの番号。</font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">CollisionObject*        m_collisionObject;              <font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクト。</span></font></li>
+                            <li>};</li>
+                            </ol></code>
+                        
+                    </div>
+                    <div class="margin-letter">
+                        
+                        <code>
+                            <ol ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Lever.cpp</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"stdafx"</font></li>
+                            <li>#include <font style="color:lightcoral;">"Lever.h"</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"Door.h"</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundEngine.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundSource.h"</font></li>
+                            <li></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ファイルをインクルードする。</span></font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">#include <font style="color:lightcoral;">"collision/CollisionObject.h"</font></span></li>
+                            <li></li>
+                            <li>Lever::Lever()</li>
+                            <li>{</li>
+                            <li></li>
+                            <li>}</li>
+                            <li></li>
+                            <li>Lever::~Lever()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトを削除する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">DeleteGO(m_collisionObject);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>}</li>
+                            <li></li>
+                            <li>bool Lever::Start()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//アニメーションを読み込む。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_animationClips[enAnimationClip_Idle].Load(<font style="color:lightcoral;">"Assets/animData/lever/idle.tka"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_animationClips[enAnimationClip_Idle].SetLoopFlag(false);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//モデルを読み込む。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.Init(<font style="color:lightcoral;">"Assets/modelData/lever/lever.tkm"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetPosition(m_position);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetScale(m_scale);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetRotation(m_rotation);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_collisionObject = NewGO&lt;CollisionObject&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ボックス状のコリジョンを作成。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_collisionObject-&gt;CreateBox(m_position,            <font style="color:lightgreen;font-style:italic;">//座標。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_rotation,                                         <font style="color:lightgreen;font-style:italic;">//回転。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3(70.0f,70.0f,70.0f));                        <font style="color:lightgreen;font-style:italic;">//大きさ。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//名前を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_collisionObject-&gt;SetName(<font style="color:lightcoral;">"lever"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//自動で削除を無効にする(DeleteGOで削除する必要がある)。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_collisionObject-&gt;SetIsEnableAutoDelete(false);</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//音を読み込む。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;g_soundEngine-&gt;ResistWaveFileBank(6, <font style="color:lightcoral;">"Assets/sound/lever.wav"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>}</li>
+                            </ol></code>
+                        
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみましょう。「Lever」の周りに当たり判定が発生しているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action3/9.png" class="margin-letter">
+                    </div>
+
+                </div>
+            </div>
+            <li id="5"><h2 class="margin-letter2">3.5 CollisionObjectの当たり判定</h2></li>
+            <div class="letter">
+                <div>
+                    では、最後に「CollisionObject」同士が衝突した時の処理を追加していきます。まずは、「Door」を開く処理を実装しましょう。
+                    Lever.cppに下記のコードを追加してください。
+                    <div class="margin-letter"> 
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Lever.cpp/Lever::ProcessTransitionPushState()</font></li>
+                            <li></li>
+                            <li>void Lever::ProcessTransitionPushState()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーが作成した、レバー用のコリジョンの配列を取得。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"player_lever"</font>);</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//for文で配列を回す。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">for(auto collision : collisions)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//レバー自身のコリジョンとプレイヤーのコリジョンが。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//衝突していたら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if(collision-&gt;IsHit(m_collisionObject) == true)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//押すステートに遷移させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//押すステートに遷移させることにより、レバーの押すアニメーションが再生させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_leverState = enLeverState_Push;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//効果音を流す。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">SoundSource* se = NewGO&lt;SoundSource&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Init(6);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Play(false);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;SetVolume(0.6f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Lever.cpp/Lever::ProcessTransitionPushIdleState()</font></li>
+                            <li></li>
+                            <li>void Lever::ProcessTransitionPushIdleState()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//押すアニメーションの再生が終了したら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(m_modelRender.IsPlayingAnimation() == true)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ドアのオブジェクトの配列を取得する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auto doors = FindGOs&lt;Door&gt;(<font style="color:lightcoral;">"door"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//for文で配列を回す。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(auto door : doors)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//レバーの番号とドアの番号が一致していれば。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if(m_leverNumber == door-&gt;GetDoorNumber())</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ドアに開けることを通知する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">door-&gt;NotifyOpen();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//ステートを「レバーを押して終わった」に変更する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_leverState = enLeverState_Push_Idle;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">break;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <span class="strong-letter">「CollisionObject」の衝突判定には、「IsHit関数」を使用</span>します。「CollisiionObject」同士が衝突したら、「Lever」のアニメーションを再生するようにしています。
+                        アニメーションの再生が終了したら、「Door」を開けるようにします。
+                    </div>
+                    <div class="margin-letter">
+                        では続いて、「Door」を閉める処理を実装しましょう。Lever.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Lever.cpp/Lever::ProcessTransitionPullState()</font></li>
+                            <li></li>
+                            <li>void Lever::ProcessTransitionPullState()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーが作成した、レバー用のコリジョンの配列を取得。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"player_lever"</font>);</li>
+                            <li></span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//for文で配列を回す。</span></font></li>
+                            <li>&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">  for(auto collision : collisions)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">  <font style="color:lightgreen;font-style:italic;">//レバー自身のコリジョンとプレイヤーのコリジョンが。</span></font></li>
+                            <li>&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">      <font style="color:lightgreen;font-style:italic;">//衝突していたら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">  if(collision-&gt;IsHit(m_collisionObject) == true)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">   <font style="color:lightgreen;font-style:italic;">//引くステートに遷移させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//引くステートに遷移させることにより、レバーの引くアニメーションが再生させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">  m_leverState = enLeverState_Pull;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//効果音を流す。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">      SoundSource* se = NewGO&lt;SoundSource&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">    se-&gt;Init(6);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> se-&gt;Play(false);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> se-&gt;SetVolume(0.6f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">  }</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> }</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Lever.cpp/Lever::ProcessTransitionPullIdleState()</font></li>
+                            <li></li>
+                            <li>void Lever::ProcessTransitionPullIdleState()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//引くアニメーションの再生が終了したら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(m_modelRender.IsPlayingAnimation() == true)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ドアのオブジェクトの配列を取得する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auto doors = FindGOs&lt;Door&gt;(<font style="color:lightcoral;">"door"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//for文で配列を回す。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(auto door : doors)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//レバーの番号とドアの番号が一致したら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> if(m_leverNumber == door-&gt;GetDoorNumber())</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">  {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ドアに閉めることを通知する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">door-&gt;NotifyClose();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">  <font style="color:lightgreen;font-style:italic;">//レバーを「引き終わった」ステートに遷移させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_leverState = enLeverState_Pull_Idle;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">break;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> }</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみてください。「Door」が開閉するようになっているでしょうか。
+                        <br>これで第三章は終了です。
+                    </div>
+                </div>
+            </div>
+            <li id="6"><h2 class="margin-letter2">3.6 まとめ</h2></li>
+            <div class="letter">
+                <div>
+                    <ul>
+                        <li>「CollisionObject」で当たり判定を取ることができる。</li>
+                    </ul>
+                </div>
+            </div>
+            <li id="7"><h2 class="margin-letter2">3.7 Tips bulletphysics(上級者向け)</h2></li>
+            <div class="letter">
+                <div>
+                    今までPysicsStaticObject、CharacterController、CollisionObjectと当たり判定をとるクラスを扱ってきました。
+                    本来であれば、このような当たり判定をとる処理というのは大変複雑なのですが、それを可能にするのが<span class="strong-letter">物理エンジン</span>です。
+                    k2Engineでは、<span class="strong-letter">「bulletphysics」</span>という物理エンジンを採用しています。これまで使用してきた当たり判定クラスはbulletphysicsの機能を使用して実装されています。
+                    <br><a href="https://ja.wikipedia.org/wiki/Bullet">Bullet</a>
+                    <div>
+                        <img src="sprite/action3/11.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        特に3Dゲームでは、様々な形状のオブジェクトが登場します。それぞれのオブジェクトの衝突判定の実装は容易なことではありません。
+                        ですので、k2Engineでは物理エンジンを採用しています。
+                    </div>
+                    <div class="margin-letter">
+                        また、「bulletphysics」を使用すれば、当たり判定をとるだけでなく、オブジェクトに物理的な挙動をさせることが可能です。
+                    </div>
+                    <div class="video margin-letter">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/fv1vpD04BKk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="margin-letter">
+                        ボールが床や壁に衝突して、跳ね返っているのがわかるでしょうか。このようなボールの移動には、bulletphysicsの機能を利用しています。
+                    </div>
+                </div>
+            </div>
         </ul>
     </div>
 </body>
