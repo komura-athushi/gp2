@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 第章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+<body>
+    <div id="box">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+    </script>
+    <div class="title">
+        <h1>第四章 通常攻撃の実装(前編)</h1>
+    </div>
+    <div class="letter-body">
+        <ul id="list1">
+            <div>
+                <h3>この章で学ぶこと</h3>
+                <h5>
+                  <ul><li><span class="strong-letter">アニメーションイベントについて</span></li>
+                    <li><span class="strong-letter">maxscriptについて(上級者向け)</span></li>
+                  </ul>
+                </h5>
+            </div>
+            <li id="1"><h2 class="margin-letter2">4.1 アニメーションイベント</h2></li>
+            <div class="letter">
+                <div>
+                    では、「Player」の通常攻撃を実装していきたいと思います。
+                    実装にあたって、<span class="strong-letter">「アニメーションイベント」</span>というものを活用します。
+                    <br>アニメーションイベントとは、<span class="strong-letter">アニメーション再生中の特定のタイミングで、任意の処理を実行させる</span>というものです。
+                    <div class="margin-letter">
+                        「Player」の通常攻撃のアニメーションは以下のようになっています。
+                    </div>
+                    <div class="video margin-letter">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/bwgPnJjkW-A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="margin-letter">
+                        一方で<span>通常攻撃の当たり判定を発生させたいタイミング</span>は、以下のような<span class="strong-letter">剣を振り回しているタイミング</span>です。
+                    </div>
+                    <div class="video margin-letter">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/rEvGAVxG1mQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="margin-letter">
+                        そのような時に使用するのが、アニメーションイベントです。アニメーションイベントを使用して、<span class="strong-letter">「剣の振り始め」から「剣の振り終わり」まで攻撃判定を発生</span>させるようにしましょう。
+                    </div>
+                </div>
+            </div>
+            <li id="2"><h2 class="margin-letter2">4.2 アニメーションキーの設定</h2></li>
+            <div class="letter">
+                <div>
+                    ではまず、3dsmaxでアニメーションキーの設定を行いましょう。
+                    <br>3dsmaxを開いて、Assets/modelData/humanのhuman_attack.fbxを読み込んでください。
+                    <div>
+                        <img src="sprite/action4/1.png" class="margin-letter">
+                        <br><img src="sprite/action4/2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        3ds Max下部の「アニメーションを再生」というところを選択すると、「攻撃アニメ―ション」が再生されると思います。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/3.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        それでは、この「攻撃アニメーション」の、「剣の振り始め」と「剣の振り終わり」に「アニメーションキー」を設定していきましょう。
+まず、「ルートボーン」である、「Hips」を選択してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/5.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        次に、3ds Max上部の「グラフエディタ」の「トラックビュー ドープシート」を選択してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/4.png" class="margin-letter">
+                        <br><img src="sprite/action4/6.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        次に、このウィンドウ上の「Hips」を選択して、「編集」→「ノート　トラック」→「追加」を選択してください。
+                        そうすると、「Hips」に「ノート」という項目が追加されていると思います。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/7.png" class="margin-letter">
+                        <br><img src="sprite/action4/8.png" class="margin-letter">
+                        <br><img src="sprite/action4/9.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        次に、「キー」→「キーを追加/除去ツール」を選択してください。これで「キー」を設定できるようになりました。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/10.png" class="margin-letter">
+                    </div>
+                    <div class="magin-letter">
+                        では、実際にアニメーションキーを設定していきましょう。まずは<span class="strong-letter">剣を振り始めるタイミング</span>に設定します。
+                        <br>まず、追加された「ノート」を選択して、「ノート」項目の「19フレーム」付近をクリックしてください。
+そうすると、このように「キー」が追加されます。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/11.png" class="margin-letter">
+                        <br><img src="sprite/action4/12.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        この追加した「キー」を右クリックすることで、「キーを編集」することができます。右クリックして、以下のようにキーを編集してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/14.png" class="margin-letter">
+                        <br><img src="sprite/action4/15.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        次に、<span class="strong-letter">剣を振り終わるタイミング</span>にアニメーションキーを設定します。
+                        以下のようなキーを追加してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/17.png" class="margin-letter">
+                        <br><img src="sprite/action4/18.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        次に、tkExporterを起動して、「Animation」項目の「start frame」と「end frame」を下記のように設定してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/20.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        最後に、「Save」から、Assets/animData/humanのattack.tkaを選択して保存してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action4/21.png" class="margin-letter">
+                        <br><img src="sprite/action4/22.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="3"><h2 class="margin-letter2">4.3 当たり判定の発生</h2></li>
+            <div class="letter">
+                <div>
+                    次に、設定したアニメーションキーを使用して、通常攻撃の当たり判定の発生をしていきましょう。
+                    まず、Player.hにアニメーションイベント用の関数を宣言してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.h</font></li>
+                            <li></li>
+                            <li>class Player : public IGameObject</li>
+                            <li>{</li>
+                            <li>public:</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;summary&gt;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// ダウンステートの遷移処理。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;summary&gt;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;void ProcessDownStateTransition();</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;summary&gt;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// クリアステートの遷移処理。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;summary&gt;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;void ProcessClearStateTransition();</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">// アニメーションイベント用の関数。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> void OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//アニメーション。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;enum enAnimationClip {</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enAnimationClip_Idle,               <font style="color:lightgreen;font-style:italic;">//待機アニメーション。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>};</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        次に、この関数をModelRenderに設定し、関数の中身を記述します。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.h/Player::Start()</font></li>
+                            <li></li>    
+                            <li>bool Player::Start()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//アニメーションをロードする。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//各サウンドをロードする。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;g_soundEngine-&gt;ResistWaveFileBank(0, <font style="color:lightcoral;">"Assets/sound/magic.wav"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;g_soundEngine-&gt;ResistWaveFileBank(3, <font style="color:lightcoral;">"Assets/sound/slash.wav"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;g_soundEngine-&gt;ResistWaveFileBank(7, <font style="color:lightcoral;">"Assets/sound/hit_pitch.wav"</font>);</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//アニメーションイベント用の関数を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_modelRender.AddAnimationEvent([&amp;](const wchar_t* clipName, const wchar_t* eventName) {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">OnAnimationEvent(clipName, eventName);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">});</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_game = FindGO&lt;Game&gt;(<font style="color:lightcoral;">"game"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp</font></li>
+                            <li></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">void Player::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)</span></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_start」の時。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> if(wcscmp(eventName, L<font style="color:lightcoral;">"attack_start"</font>) == 0)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃中にする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_isUnderAttack = true;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_end」の時。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else if(wcscmp(eventName, L<font style="color:lightcoral;">"attack_end"</font>) == 0)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃を終わる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_isUnderAttack = false;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li></li>
+                            <li>void Player::Render(RenderContext&amp; rc)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//モデルを描画する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.Draw(rc);</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <span class="strong-letter">「m_isUnderAttack」がtrueの時、攻撃中</span>ということです。
+                        では、最後に「Attack関数」と「MakeAttackCollision関数」に下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::Attack()</font></li>
+                            <li></li>
+                            <li>void Player::Attack()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃中でないなら、処理をしない。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(m_playerState != enPlayerState_Attack)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃判定中であれば。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if(m_isUnderAttack == true)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//攻撃用のコリジョンを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> MakeAttackCollision();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::MakeAttackCollision()</font></li>
+                            <li></li>
+                            <li>void Player::MakeAttackCollision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">auto collisionObject = NewGO&lt;CollisionObject&gt;(0);</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 collisionPosition = m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標をプレイヤーの少し前に設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionPosition += m_forward * 50.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//球状のコリジョンを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;CreateSphere(collisionPosition,        <font style="color:lightgreen;font-style:italic;">//座標。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Quaternion::Identity,                               <font style="color:lightgreen;font-style:italic;">//回転。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">70.0f                                               <font style="color:lightgreen;font-style:italic;">//半径。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;SetName(<font style="color:lightcoral;">"player_attack"</font>);</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        出来たら、実行してみてください。Yボタンで通常攻撃です。
+                        <br>以下のように当たり判定が発生しているでしょうか。
+                    </div>
+                    <div class="video margin-letter">
+                        <iframe width="800" height="500" src="https://www.youtube.com/embed/CYO0UQsvaIo?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+
+                </div>
+            </div>  
+            <li id="4"><h2 class="margin-letter2">4.4 まとめ</h2></li>
+            <div class="letter">
+                <div>
+                    <ul>
+                        <li>アニメーションイベントを使用すれば、アニメーション再生中の任意のタイミングで処理を実行できる。</li>
+                    </ul>
+                </div>
+            </div>
+            <li id="5"><h2 class="margin-letter2">4.5 maxscript</h2></li>
+            <div class="letter">
+                <div>
+                    今までtkmファイル出力、アニメーションキーの出力など、様々な場面でtkExporterを使用しました。
+                    これは、<span class="strong-letter">「maxscript」</span>と呼ばれるものです。
+                    <div class="margin-letter">
+                        <span class="strong-letter">「maxscript」</span>とは、3dsmaxで実行可能なスクリプト言語です。
+                        maxscriptにより、<span class="strong-letter">3dsmaxにユーザーインターフェースを追加したり、制作・設定したものを外部に出力</span>したりできます。
+                        <br><a href="https://help.autodesk.com/view/3DSMAX/2017/JPN/?guid=__files_GUID_41315287_B2FA_4496_BDB6_28F8D38D2213_htm">3DS MAX ヘルプ</a>
+                    </div>
+                    <div class="margin-letter">
+                        ただゲーム制作をするだけでなく、ゲーム制作に必要なツール制作も就活でアピールとなるポイントです。余裕のある人は調べてみてください。
+                        <br>また、3dsmaxと同じ<span class="strong-letter">3DCGソフトの「Blender」では、スクリプト言語として、「Python」が実行可能</span>となっています。
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+</body>
