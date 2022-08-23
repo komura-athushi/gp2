@@ -368,11 +368,13 @@
                     この可変長配列では、<span class="strong-letter">配列の長さは固定ではなく要素の追加、削除が可能</span>です。
                     <br>C++では、標準ライブラリの「listクラス」と「vectorクラス」がこれに当たります(他にもあります)。ゲーム内で要素数が変化する配列を作成しなければいけない場合、この可変長配列を利用してみましょう。
                     <br><a href="https://qiita.com/ysuzuki19/items/df872d91c9c89cc31aee">C++のvectorまとめ</a>
-                    <br>この、「listクラス」と「vectorクラス」、似ているようで内部の処理は全然違うので、興味のある学生は調べてみてもいいかもしれませんね。
-                    <br>ざっくりいうと、<span class="strong-letter">配列のとある要素に対するアクセス速度はvectorクラス&gt;listクラス</span>、<span class="strong-letter">要素の追加・削除の速度はlistクラス&gt;vectorクラス</span>です。
-                    <br>配列の長さが短い、要素の追加・削除が頻繁に行われる→listクラス
-                    <br>配列の長さが長い、要素の追加・削除があまり行われない→vectorクラス
-                    <br><a href="https://cu-atsu.hatenadiary.org/entry/20110521/1305978324">基本　その２『ListとVectorの違い』</a>
+                    <div class="margin-letter">
+                        この、「listクラス」と「vectorクラス」、似ているようで内部の処理は全然違うので、興味のある学生は調べてみてもいいかもしれませんね。
+                        <br>ざっくりいうと、<span class="strong-letter">配列のとある要素に対するアクセス速度はvectorクラス&gt;listクラス</span>、<span class="strong-letter">要素の追加・削除の速度はlistクラス&gt;vectorクラス</span>です。
+                        <br>配列の長さが短い、要素の追加・削除が頻繁に行われる→listクラス
+                        <br>配列の長さが長い、要素の追加・削除があまり行われない→vectorクラス
+                        <br><a href="https://cu-atsu.hatenadiary.org/entry/20110521/1305978324">基本　その２『ListとVectorの違い』</a>
+                    </div>
                     <div class="margin-letter">
                         <code>
                             <ol class="code-region row col-11">

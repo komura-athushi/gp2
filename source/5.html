@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 第五章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+<body>
+    <div id="box">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+    </script>
+    <div class="title">
+        <h1>第五章 通常攻撃の実装(中編)</h1>
+    </div>
+    <div class="letter-body">
+        <ul id="list1">
+            <div>
+                <h3>この章で学ぶこと</h3>
+                <h5>
+                  <ul><li><span class="strong-letter">ボーン情報の取得</span></li>
+                    <li><span class="strong-letter">行列(上級者向け)</span></li>
+                  </ul>
+                </h5>
+            </div>
+            <li id="1"><h2 class="margin-letter2">5.1 Enemy側の当たり判定</h2></li>
+            <div class="letter">
+                <div>
+                    第四章では、「Player」側の当たり判定の実装をしてきました。第五章では、「Enemy」側の実装をしましょう。
+                    では早速、「Enemy」側の処理を実装していきましょう。
+                    <br>下記のコードを追記してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"stdafx.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"Enemy.h"</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"Game.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"FireBall.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"Player.h"</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundEngine.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundSource.h"</font></li>
+                            <li></li>
+                            <li>#include &lt;time.h&gt;</li>
+                            <li>#include &lt;stdlib.h&gt;</li>
+                            <li></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//CollisionObjectを使用したいため、ファイルをインクルードする。</span></font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">#include <font style="color:lightcoral;">"collision/CollisionObject.h"</font></span></li>
+                            <li></li>
+                            <li>Enemy::Enemy()</li>
+                            <li>{</li>
+                            <li></li>
+                            <li>}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>void Enemy::Collision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーの攻撃用のコリジョンを取得する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"player_attack"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンの配列をfor文で回す。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">for(auto collision : collisions)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンとキャラコンが衝突したら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> if(collision-&gt;IsHit(m_charaCon))</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPを1減らす。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_hp -= 1;</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//効果音を再生する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">SoundSource* se = NewGO&lt;SoundSource&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Init(4);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Play(false);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;SetVolume(0.4f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみてください。「Enemy」に通常攻撃がヒットするようになったと思います。
+                        <br>しかし、いくら攻撃しても「Enemy」は倒れないうえに、ヒット音がおかしくなっていると思います。
+                    </div>
+                </div>
+            </div>
+            <li id="2"><h2 class="margin-letter2">5.2 Enemyのステート遷移</h2></li>
+            <div class="letter">
+                <div>
+                    色々おかしいのは、<span class="strong-letter">「Enemy」のステート遷移をしていない</span>からです。第三章で、このゲームのクラスには、それぞれステートが設定されていると説明しました。
+                    <br>「Enemy」には、以下のステートが設定されています。
+                    <div>
+                        <img src="sprite/action5/1.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        <span class="strong-letter">「Enemy」が攻撃に対して、何の反応もなかったのは、ステート遷移をしていなかった</span>からです。
+                        では、ステート遷移の処理を追記しましょう。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::Collision()</font></li>
+                            <li></li>
+                            <li>void Enemy::Collision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーの攻撃用のコリジョンを取得する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"player_attack"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//コリジョンの配列をfor文で回す。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;for(auto collision : collisions)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//コリジョンとキャラコンが衝突したら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(collision-&gt;IsHit(m_charaCon))</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPを1減らす。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_hp -= 1;</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPが0より上なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if(m_hp &gt; 0)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//被ダメージステートに遷移する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState = enEnemyState_ReceiveDamage;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> }</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPが0なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else if(m_hp == 0)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//ダウンステートに遷移する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState = enEnemyState_Down;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//効果音を再生する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(4);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(0.4f);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}             </li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみましょう。「Enemy」が倒せるようになったと思います。しかし、相変わらずヒット音がおかしいです。何故でしょうか。
+                    </div>
+                    <div class="margin-letter">
+                        「Player」の通常攻撃の当たり判定の発生は、3dsmaxで設定したタイミングの間、毎フレーム実行されます。
+                        <span class="strong-letter">「Enemy」側もその間は、毎フレームダメージを受けている判定</span>になってしまっているのです。
+                        なので、<span class="strong-letter">一度の攻撃でHPが数十減ったり、音が毎フレーム鳴ったり</span>していたのです。
+                        MonsterHunterやDarkSoulなどのゲームでは、攻撃1回で毎フレーム攻撃がヒットするようなことはありませんよね？基本攻撃1回で、1ヒットだと思います。
+                        <br>このゲームでも、攻撃1回で1ヒットだけするようにしましょう。それでは、下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy/Enemy::Collision()</font></li>
+                            <li></li>
+                            <li>void Enemy::Collision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//被ダメージ、あるいはダウンステートの時には。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//当たり判定処理をしない。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if(m_enemyState == enEnemyState_ReceiveDamage ||</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState == enEnemyState_Down)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーの攻撃用のコリジョンを取得する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"player_attack"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみましょう。攻撃が1ヒットになっているでしょうか。
+                    </div>
+                </div>
+            </div>
+            <li id="3"><h2 class="margin-letter2">5.3 ボーンを利用した当たり判定</h2></li>
+            <div class="letter">
+                <div>
+                    現在、「Player」の通常攻撃の当たり判定が結構大雑把になっています。DarkSoulなどのゲームでは、<span class="strong-letter">攻撃の当たり判定は武器に沿って発生</span>しています。
+                    <div>
+                        <img src="sprite/action5/2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        <span class="strong-letter">攻撃の当たり判定を、このように剣の形に沿って発生</span>させるようにしてみましょう。
+                        <br>それでは、Player.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy/Enemy::MakeAttackCollision()</font></li>
+                            <li></li>
+                            <li>void Player::MakeAttackCollision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトを作成する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;auto collisionObject = NewGO&lt;CollisionObject&gt;(0);</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Vector3 collisionPosition = m_position;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標をプレイヤーの少し前に設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;collisionPosition += m_forward * 50.0f;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ボックス状のコリジョンを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;CreateBox(collisionPosition,               <font style="color:lightgreen;font-style:italic;">//座標。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Quaternion::Identity,                                       <font style="color:lightgreen;font-style:italic;">//回転。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3(110.0f, 15.0f, 15.0f)                               <font style="color:lightgreen;font-style:italic;">//大きさ。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;collisionObject-&gt;SetName(<font style="color:lightcoral;">"player_attack"</font>);</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみましょう。当たり判定がこのように、細長くなっているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action5/3.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        次に、<span class="strong-letter">この当たり判定に剣の座標や回転を反映</span>させましょう。
+                        それには、<span class="strong-letter">「ボーン」の情報を使用</span>します。
+                    </div>
+                    <div class="margin-letter">
+                        3dsmaxで、Assets/modelData/humanのhuman_attack.fbxを読み込んでみてください。
+                        <br>humanには様々なボーンが設定されていますが、「Sword」というボーンが設定されています。この<span class="strong-letter">「Sword」というボーンは、剣と同じように動くように設定</span>されています。
+                        この「Sword」ボーンを活用しましょう。
+                    </div>
+                    <div>
+                        <img src="sprite/action5/4.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        それでは、Player.hと.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.h</font></li>
+                            <li></li>
+                            <li>class Player : public IGameObject</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;public:</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;int                     m_hp = 10;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Game*                   m_game = nullptr;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">int                     m_swordBoneId = -1;                   <font style="color:lightgreen;font-style:italic;">//「Sword」ボーンのID。</span>               </font></li>
+                            <li>};</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::Start()</font></li>
+                            <li></li>
+                            <li>bool Player::Start()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_game = FindGO&lt;Game&gt;(<font style="color:lightcoral;">"game"</font>);</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//「Sword」ボーンのID(番号)を取得する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_swordBoneId = m_modelRender.FindBoneID(L<font style="color:lightcoral;">"Sword"</font>);</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        上記のコードでは、「Sword」ボーンのIDをModelRenderから取得しています。このIDを利用して、「Sword」ボーンの情報を取得しましょう。
+                        <br>それでは、Player.cppのMakeAttackCollision関数を以下のように修正してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::MakeAttackCollision()</font></li>
+                            <li></li>
+                            <li>void Player::MakeAttackCollision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;collisionObject-&gt;SetName(<font style="color:lightcoral;">"player_attack"</font>);</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//「Sword」ボーンのワールド行列を取得する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Matrix matrix = m_modelRender.GetBone(m_swordBoneId)-&gt;GetWorldMatrix();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//「Sword」ボーンのワールド行列をコリジョンに適用する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;SetWorldMatrix(matrix);    </span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみましょう。当たり判定が剣に沿っているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action5/2.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="4"><h2 class="margin-letter2">5.4 まとめ</h2></li>
+            <div class="letter">
+                <div>
+                    <ul>
+                        <li>ボーンを活用しよう。</li>
+                    </ul>
+                </div>
+            </div>
+            <li id="5"><h2 class="margin-letter2">5.5 Tips 行列(上級者向け)</h2></li>
+            <div class="letter">
+                <div>
+                    上記のコードで、行列を使用しました。k2EngineのModelRenderでは、座標・回転・大きさを行列に変換しています。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Model.cpp/Model::UpdateWorldMatrix()</font></li>
+                            <li></li>
+                            <li>void Model::UpdateWorldMatrix(Vector3 pos, Quaternion rot, Vector3 scale)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Matrix mBias;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (m_modelUpAxis == enModelUpAxisZ) {</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//Z-up</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mBias.MakeRotationX(Math::PI * -0.5f);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Matrix mTrans, mRot, mScale;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;mTrans.MakeTranslation(pos);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;mRot.MakeRotationFromQuaternion(rot);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;mScale.MakeScaling(scale);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_world = mBias * mScale * mRot * mTrans;</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        この変換された行列を、最終的にモデル描画の際に使用しています。その行列を直接設定できるのが、上記のModelRenderのSetWorldMatrix関数というわけです。
+                        他にも様々な処理で、行列を使用しています。
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+</body>

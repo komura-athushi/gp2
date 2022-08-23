@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 第六章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+<body>
+    <div id="box">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+    </script>
+    <div class="title">
+        <h1>第六章 通常攻撃の実装(後編)</h1>
+    </div>
+    <div class="letter-body">
+        <ul id="list1">
+            <div>
+                <h3>この章で学ぶこと</h3>
+                <h5>
+                  <ul><li><span class="strong-letter">Effekseer</span></li>
+                    <li><span class="strong-letter">EffectEmitter</span></li>
+                    <li><span class="strong-letter">flyweightパターン(上級者向け)</span></li>
+                  </ul>
+                </h5>
+            </div>
+            <li id="1"><h2 class="margin-letter2">6.1 Effekseer</h2></li>
+            <div class="letter">
+                <div>
+                    最後に、通常攻撃に「エフェクト」を追加しましょう。「エフェクト」とは、以下のようなものです。
+                    <div>
+                        <img src="sprite/action6/1.png" class="margin-letter">
+                        <br><img src="sprite/action6/2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        k2Engineでは、このような<span class="strong-letter">エフェクト制作は、「Effekseer」というツール</span>で行います。
+                        <br><a href="https://effekseer.github.io/jp/">Effekseer公式サイト</a>
+                    </div>
+                    <div class="margin-letter">
+                        tools/Effekseer160Win/ToolのEffekseer.exeでEffekseerが起動します。
+                    </div>
+                    <div>
+                        <img src="sprite/action6/5.png" class="margin-letter">
+                        <br><img src="sprite/action6/3.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        <span class="strong-letter">k2Engine用のエフェクトを出力する時は、エクスポート→標準出力</span>を選んでください。
+                    </div>
+                    <div>
+                        <img src="sprite/action6/4.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        <h3><span class="strong-letter" style="color:red">エフェクトを使用するとゲームが映えるので、積極的に活用していきましょう。</span></h3>
+                    </div>
+                    <div class="video margin-letter">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/kXPFyvteCOw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video margin-letter">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/NtCa7XejWmg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+            <li id="2"><h2 class="margin-letter2">6.2 エフェクト発生</h2></li>
+            <div class="letter">
+                <div>
+                    それでは、通常攻撃時にエフェクトが発生するようにしましょう。今回は予めエフェクトを用意しているので、それを利用します。
+                    エフェクトもサウンドと同じように以下の手順で発生させます。
+                    <div>
+                        <ol class="margin-letter">
+                            <li>EffectEngineクラスのResistEffect関数でefkファイルを読み込んで、読み込んだデータを指定した番号に登録する。</li>
+                            <li>EffectEmitterクラスのオブジェクトを作成する。</li>
+                            <li>EffectEmitterクラスのInit関数で1.の番号を指定して、1.で読み込んだデータを持ってくる。</li>
+                            <li>EffectEmitterクラスのPlay関数でエフェクトが再生される。</li>
+                        </ol>
+                    </div>
+                    <div class="margin-letter">
+                        それでは、Player.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                            <code>
+                                <ol class="code-region row col-11">
+                                <li><font style="color:lightgreen;font-style:italic;">//Player.cpp</font></li>
+                                <li></li>
+                                <li>#include <font style="color:lightcoral;">"stdafx.h"</font></li>
+                                <li>#include <font style="color:lightcoral;">"Player.h"</font></li>
+                                <li></li>
+                                <li>#include <font style="color:lightcoral;">"Game.h"</font></li>
+                                <li>#include <font style="color:lightcoral;">"FireBall.h"</font></li>
+                                <li></li>
+                                <li>#include <font style="color:lightcoral;">"sound/SoundEngine.h"</font></li>
+                                <li>#include <font style="color:lightcoral;">"sound/SoundSource"</font></li>
+                                <li></li>
+                                <li><font style="color:lightgreen;font-style:italic;">//CollisionObjectを使用するために、ファイルをインクルードする。</font></li>
+                                <li>#include <font style="color:lightcoral;">"collision/CollisionObject.h"</font></li>
+                                <li></li>
+                                <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//EffectEmitterを使用するために、ファイルをインクルードする。</span></font></li>
+                                <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">#include <font style="color:lightcoral;">"graphics/effect/EffectEmitter.h"</font></li>
+                                <li></span>                .</li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                                <li>bool Player::Start()</li>
+                                <li>{</li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//「Sword」ボーンID(番号)を取得する。</font></li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;m_swordBoneId = m_modelRender.FindBoneID(L<font style="color:lightcoral;">"Sword"</font>);</li>
+                                <li></li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//番号を指定して、efkファイルを読み込む。</span></font></li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">EffectEngine::GetInstance()-&gt;ResistEffect(1, u<font style="color:lightcoral;">"Assets/effect/efk/enemy_slash_01.efk"</font>);</span></li>
+                                <li></li>
+                                <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                                <li>}</li>
+                                </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        enemy_slash_01.efkというのが今回使用しているエフェクトです。これで、efkファイルを読み込むことに成功しました。
+                        <br>続いて、読み込んだefkファイルを元にエフェクトを発生させます。Player.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::MakeSlashingEffect()/Player::OnAnimationEvent()</font></li>
+                            <li></li>
+                            <li>void Player::MakeSlashingEffect()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃エフェクトを発生させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">EffectEmitter* effectEmitter = NewGO&lt;EffectEmitter&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ResistEffect関数で指定した番号を指定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;Init(1);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//大きさを設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;SetScale(Vector3::One * 11.0f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 effectPosition = m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を少し上にする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectPosition.y += 70.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;SetPosition(effectPosition);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//エフェクトを再生する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;Play();</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(3);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(0.8f);</li>
+                            <li>}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>void Player::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_start」の時。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(wcscmp(eventName, L<font style="color:lightcoral;">"attack_start"</font>))</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃中にする。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_isUnderAttack = true;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エフェクトを発生させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">MakeSlashingEffect();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_end」の時。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;else if(wcscmp(eventName, L<font style="color:lightcoral;">"attack_end"</font>))</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃を終わる。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_isUnderAttack = false;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら実行してみましょう。攻撃時にエフェクトが発生しているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action6/6.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        しかし、エフェクトの向きがプレイヤーの向きとあっていませんね？
+                        <br>EffectEmitterにも、ModelRenderと同じように、座標・回転・大きさを設定することができます。エフェクトが攻撃する方向を向くように、調整してみましょう。
+                        <br>では、Player.cppのMakeSlashingEffect関数を次のように修正してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::MakeSlashingEffect()</font></li>
+                            <li></li>
+                            <li>void Player::MakeSlashingEffect()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃エフェクトを発生させる。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;EffectEmitter* effectEmitter = NewGO&lt;EffectEmitter&gt;(0);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ResistEffect関数で指定した番号を指定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;effectEmitter-&gt;Init(1);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//大きさを設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;effectEmitter-&gt;SetScale(Vector3::One * 11.0f);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Vector3 effectPosition = m_position;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を少し上にする。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;effectPosition.y += 70.0f;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//座標を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;effectEmitter-&gt;SetPosition(effectPosition);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Quaternion rotation;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーの回転。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">rotation = m_rotation;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//回転させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">rotation.AddRotationDegY(360.0f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">rotation.AddRotationDegZ(180.0f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//回転を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;SetRotation(rotation);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//エフェクトを再生する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;effectEmitter-&gt;Play();</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(3);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(0.8f);</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら実行してみましょう。エフェクトが攻撃方向に向いているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action6/7.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="3"><h2 class="margin-letter2">6.3 まとめ</h2></li>
+            <div class="letter">
+                <div>
+                    <ul>
+                        <li>エフェクト制作には、Effekseerを使用する。</li>
+                        <li>エフェクトの発生には、EffectEmitterクラスを使用する。</li>
+                    </ul>
+                </div>
+            </div>
+            <li id="4"><h2 class="margin-letter2">6.4 Tips flyweightパターン(上級者向け)</h2></li>
+            <div class="letter">
+                <div>
+                    .wavファイルや.efkファイルの読み込みに関して、<span class="strong-letter">flyweightパターン</span>というものを活用しています。flyweightパターンというのは、<span class="strong-letter">デザインパターンと呼ばれるものの一種</span>です。
+                    <br><a href="https://e-words.jp/w/%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3.html">デザインパターンとは</a>
+                    <div class="margin-letter">
+                        flyweightパターンというのは、<span class="strong-letter">インスタンスを共有して活用することにより無駄なインスタンスの生成を省き、処理の高速化やメモリの使用量を減らす</span>ことを目的としたものです。
+                        <br>k2Engineでは、同じ.wavファイルや.efkファイルを読み込む際に、一度ファイルを読み込んだことがあれば、その読み込んだインスタンスを使いまわしています。
+                        これにより、ファイルを読み込む過程を省いたり、インスタンス使いまわしによるメモリ使用量の削減が見込めます。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li>void EffectEngine::ResistEffect(const int number, const char16_t* filePath)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Effekseer::EffectRef effect;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;auto it = m_effectMap.find(number);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ロードされていなければ。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (it == m_effectMap.end()) {</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//新規にファイルを読み込む。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;effect = Effekseer::Effect::Create(m_manager, filePath);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_effectMap.insert({ number, effect });</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        ゲームでは様々な処理を行わないといけないので、処理の高速化やメモリ使用量の削減は重要な課題の1つなのです。
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+</body>
