@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 第七章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+<body>
+    <div id="box">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+    </script>
+    <div class="title">
+        <h1>第七章 魔法攻撃の実装(前編)</h1>
+    </div>
+    <div class="letter-body">
+        <ul id="list1">
+            <div>
+                <h3>この章で学ぶこと</h3>
+                <h5>
+                  <ul><li><span class="strong-letter">クラス宣言と#include(上級者向け)</span></li>
+                  </ul>
+                </h5>
+            </div>
+            <li id="1"><h2 class="margin-letter2">7.1 アニメーションキーの設定</h2></li>
+            <div class="letter">
+                <div>
+                    第七章、第八章では魔法攻撃を実装していきます。
+                    通常攻撃実装で学んだことの復習になります。
+                    <div>
+                        <img src="sprite/action7/1.png" class="margin-letter">
+                        <br><img src="sprite/action7/2.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        ゲームパッドのXボタンで魔法攻撃です。今はただ、アニメーションが再生されるだけです。
+                    </div>
+                    <div class="video margin-letter">
+                        <iframe width="800" height="475" src="https://www.youtube.com/embed/-HpitEkCrDI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="margin-letter">
+                        このアニメーションの内、<span class="strong-letter">手を前に突き出したタイミングで魔法を撃つように、アニメーションキーを設定</span>しましょう。
+                    </div>
+                    <div>
+                        <img src="sprite/action7/3.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        では、3dsmaxを開いて、Assets/modelData/humanのhuman_attack.fbxを読み込んでください。
+                        第四章を参考にアニメーションキーを設定して、tkaファイルを出力してください。
+                    </div>
+                    <div>
+                        <img src="sprite/action7/4.png" class="margin-letter">
+                        <br><img src="sprite/action7/5.png" class="margin-letter">
+                        <br><img src="sprite/action7/6.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="2"><h2 class="margin-letter2">7.2 アニメーションイベント</h2></li>
+            <div class="letter">
+                <div>
+                    次に、アニメーションイベントの設定を行います。Player.cppのMakeFireBall関数とOnAnimationEvent関数に下記のコードを追加してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::MakeFireBall()/Player::OnAnimationEvent()</font></li>
+                            <li></li>
+                            <li>void Player::MakeFireBall()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//ファイヤーボールを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">FireBall* fireBall = NewGO&lt;FireBall&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 fireBallPosition = m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を少し上にする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBallPosition.y += 70.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//座標を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBall-&gt;SetPosition(fireBallPosition);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBall-&gt;SetRotation(m_rotation);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//術者はプレイヤーにする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBall-&gt;SetEnMagician(FireBall::enMagician_Player);</span></li>
+                            <li>}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>void Player::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_start」の時。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (wcscmp(eventName, L<font style="color:lightcoral;">"attack_start"</font>) == 0) {</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃中にする。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_isUnderAttack = true;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//エフェクトを発生させる。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MakeSlashingEffect();</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_end」の時。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;else if (wcscmp(eventName, L<font style="color:lightcoral;">"attack_end"</font>) == 0) {</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃を終わる。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_isUnderAttack = false;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//キーの名前が「magic_attack」の時。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else if (wcscmp(eventName, L<font style="color:lightcoral;">"magic_attack"</font>) == 0) {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ファイヤーボールを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">MakeFireBall();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <span class="strong-letter">「FireBall」というクラスが、魔法攻撃用のクラス</span>になります。
+                        <br>魔法攻撃の発生の部分は、これで完了です。続いてFireBallクラスの実装を行いましょう。
+                    </div>
+                </div>
+            </div>
+            <li id="3"><h2 class="margin-letter2">7.3 当たり判定</h2></li>
+            <div class="letter">
+                <div>
+                    まず、FireBallクラスに当たり判定を追加しましょう。FireBall.hに下記のコードを追加してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//FireBall.h</font></li>
+                            <li></li>
+                            <li>#pragma once</li>
+                            <li></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//クラス宣言。</span></font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">class CollisionObject;</span></li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">///&lt;summary&gt;</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">///ファイヤーボール。</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">///&lt;summary&gt;</font></li>
+                            <li>class FireBall : public IGameObject</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;public:</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;EnMagician                  m_enMagician = enMagician_None;         <font style="color:lightgreen;font-style:italic;">//術者。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;float                       m_timer = 0.0;                          <font style="color:lightgreen;font-style:italic;">//タイマー。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">CollisionObject*            m_collisionObject = nullptr;            <font style="color:lightgreen;font-style:italic;">//CollisionObject。</span></font></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        続いて、FireBall.cppに下記のコードを追加してください。少し長いですが、頑張ってください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//FireBall.cpp</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"stdafx.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"FireBall.h"</font></li>
+                            <li></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundEngine.h"</font></li>
+                            <li>#include <font style="color:lightcoral;">"sound/SoundSource.h"</font></li>
+                            <li></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//CollisionObjectを使用したいので、ファイルをインクルードする。</span></font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">#include <font style="color:lightcoral;">"collision/CollisionObject.h"</font></span></li>
+                            <li></li>
+                            <li>FireBall::FireBall()</li>
+                            <li>{</li>
+                            <li></li>
+                            <li>}</li>
+                            <li></li>
+                            <li>FireBall::~FireBall()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトを削除する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">DeleteGO(m_collisionObject);</span></li>
+                            <li>}</li>
+                            <li></li>
+                            <li>bool FireBall::Start()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//効果音を再生する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(1);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(1.5f);</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_collisionObject = NewGO&lt;CollisionObject&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//球状のコリジョンを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> m_collisionObject-&gt;CreateSphere(</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_position,                     <font style="color:lightgreen;font-style:italic;">//座標。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Quaternion::Identity,           <font style="color:lightgreen;font-style:italic;">//回転。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">35.0f                           <font style="color:lightgreen;font-style:italic;">//半径。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">);</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//術者がプレイヤーだったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (m_enMagician == enMagician_Player)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//名前をplayer_fireballにする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> m_collisionObject-&gt;SetName(<font style="color:lightcoral;">"player_fireball"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> }</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//術者がエネミーだったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> else if (m_enMagician == enMagician_Enemy)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//名前をenemy_fireballにする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_collisionObject-&gt;SetName(<font style="color:lightcoral;">"enemy_fireball"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトが自動で削除されないようにする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> m_collisionObject-&gt;SetIsEnableAutoDelete(false);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>}</li>
+                            <li></li>
+                            <li>void FireBall::Update()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_position += m_moveSpeed * g_gameTime-&gt;GetFrameDeltaTime();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンオブジェクトに座標を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_collisionObject-&gt;SetPosition(m_position);</span></li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してみてください。当たり判定が発生しているでしょうか。
+                    </div>
+                    <div>
+                        <img src="sprite/action7/8.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="4"><h2 class="margin-letter2">7.4 まとめ</h2></li>
+            <div class="letter">
+                <div>
+                    <ul>
+                        <li>なし。</li>
+                    </ul>
+                </div>
+            </div>
+            <li id="5"><h2 class="margin-letter2">7.5 Tips クラス宣言と#include(上級者向け)</h2></li>
+            <div class="letter">
+                <div>
+                    今まで特定のクラスを.hで使用する際に、<span class="strong-letter">クラス宣言かファイルのinclude</span>だったと思います。この2つの違いは何でしょうか。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.h</font></li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//CollisionObjectを使用したいので、クラス宣言する。</font></li>
+                            <li>class CollisionObject;</li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemyクラスを使用したいので、includeする。</font></li>
+                            <li>#include <font style="color:lightcoral;">"Enemy.h"</font></li>
+                            <li></li>
+                            <li>class Player : public IGameObject</li>
+                            <li>{</li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <span class="strong-letter">クラス宣言は、○○クラスが存在するということを宣言しているだけ</span>です。一方<span class="strong-letter">ファイルのincludeは、ファイルのソースをそのままコピペしているような物</span>です。
+                        <span class="strong-letter">宣言だけ</span>か<span class="strong-letter">クラスの構造まで読み込んでいるか</span>、その違いがあります。
+                    </div>
+                    <div class="margin-letter">
+                        では、以下2つのソースを見比べてみましょう。
+                    </div>
+                    <div>
+                        <img src="sprite/action7/11.png" class="margin-letter">
+                        <br><img src="sprite/action7/12.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        上のソースでは<span class="strong-letter">m_enemyは通常変数</span>ですが、下のソースでは<span class="strong-letter">m_enemyはポインタ変数</span>として宣言されています。
+                        また、上のソースでは、「不完全な型は使用できません」というエラーメッセージが出ています。
+                        <br>実際にプログラムを書いてみると分かるのですが、<span class="strong-letter">クラス宣言ではポインタ変数の宣言は可能ですが、通常変数の宣言はできません。</span>
+                        一方のファイルのincludeでは、どちらも可能です。これは何故でしょうか。
+                    </div>
+                    <div class="margin-letter">
+                        実は、<span class="strong-letter">ポインタ変数の宣言ではクラスの構造を知る必要がないため、クラス宣言だけでも十分</span>なのです。
+                        しかし、<span class="strong-letter">通常変数の宣言やメンバ変数・関数を使用する場合などは、クラスの構造を知る必要がある</span>ため、ファイルのincludeが必要なのです。
+                        <br>詳しくはこちら
+                        <br><a href="https://ota42y.com/blog/2014/09/22/cpp-include/">C++で不要なincludeを減らす</a>
+                    </div>
+                    <div class="margin-letter">
+                        <ul><li>クラス宣言→ポインタ変数の宣言</li>
+                            <li>ファイルのinclude→通常変数の宣言、メンバ変数・関数の使用</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+</body>
