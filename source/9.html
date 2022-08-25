@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 第九章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+<body>
+    <div id="box">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+    </script>
+    <div class="title">
+        <h1>第九章 Enemyの実装(前編)</h1>
+    </div>
+    <div class="letter-body">
+        <ul id="list1">
+            <div>
+                <h3>この章で学ぶこと</h3>
+                <h5>
+                  <ul><li><span class="strong-letter">ベクトルは大事です。</span></li>
+                    <li><span class="strong-letter">早期リターン(上級者向け)</span></li>
+                  </ul>
+                </h5>
+            </div>
+            <li id="1"><h2 class="margin-letter2">9.1 Enemy側の行動</h2></li>
+            <div class="letter">
+                <div>
+                    最後に、第九章・第十章で「Enemy」の実装をしていきましょう。数学の話が出てきますが、ゲーム制作と数学は切り離せないので、頑張ってください。
+                    <br>まず、実装したい「Enemy」の行動は、以下の通りです。
+                    <div>
+                        <img src="sprite/action9/1_1.png" class="margin-letter">
+                        <br><img src="sprite/action9/2_1.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        実装したい「Enemy」の行動を紹介したところで、「Enemy」のステートについても紹介します。
+                        例にもれず、「Enemy」もステートを遷移させることにより、行動を制御していきます。
+                    </div>
+                    <div>
+                        <img src="sprite/action9/5.png" class="margin-letter">
+                    </div>
+                </div>
+            </div>
+            <li id="2"><h2 class="margin-letter2">9.2 ステート遷移</h2></li>
+            <div class="letter">
+                 <div>
+                    では早速ステートを遷移させるプログラムを書いていきましょう。まずは、「Player」を発見したら、魔法攻撃or追尾ステートに遷移するようにしてみましょう。
+                    <br>Enemy.cppのProcessCommonStateTransition関数に下記のコードを追加してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::ProcessCommonStateTransition()</font></li>
+                            <li></li>
+                            <li>void Enemy::ProcessCommonStateTransition()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//各タイマーを初期化。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//待機時間と追跡時間を制限するため。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_idleTimer = 0.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_chaseTimer = 0.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーを見つけたら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (SearchPlayer() == true)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//通常攻撃できない距離なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (IsCanAttack() == false)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//乱数によって、追跡させるか魔法攻撃をするか決定する。&nbsp;&nbsp;&nbsp;&nbsp;</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">int ram = rand() % 100;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//乱数が40以上なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (ram &gt; 40)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//追跡ステートに遷移する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState = enEnemyState_Chase;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//乱数が40未満なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//魔法攻撃ステートに遷移する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState = enEnemyState_MagicAttack;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーを見つけられなければ。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//待機ステートに遷移する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState = enEnemyState_Idle;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        続いて、「Player」に接近した際の処理を追加しましょう。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::ProcessCommonStateTransition()/Enemy::IsCanAttack()</font></li>
+                            <li></li>
+                            <li>const bool Enemy::IsCanAttack() const</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 diff = m_player-&gt;GetPosition() - m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エネミーとプレイヤーの距離が近かったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (diff.LengthSq() &lt;= 100.0f * 100.0f)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃できる！</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return true;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃できない。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return false;</span></li>
+                            <li>}</li>
+                            <li></li>
+                            <li>void Enemy::ProcessCommonStateTransition()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//各タイマーを初期化。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//待機時間と追跡時間を制限するため。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_idleTimer = 0.0f;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_chaseTimer = 0.0f;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーを見つけたら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (SearchPlayer() == true)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//通常攻撃できない距離なら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (IsCanAttack() == false)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//乱数によって、追跡させるか魔法攻撃をするか決定する。&nbsp;&nbsp;&nbsp;&nbsp;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int ram = rand() % 100;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//乱数が40以上なら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (ram &gt; 40)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//追跡ステートに遷移する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_enemyState = enEnemyState_Chase;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//乱数が40未満なら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//魔法攻撃ステートに遷移する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_enemyState = enEnemyState_MagicAttack;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//通常攻撃ができない範囲なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//乱数によって、待機させるか通常攻撃をするか決定する。&nbsp;&nbsp;&nbsp;&nbsp;</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">int ram = rand() % 100;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//乱数が30より上なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (ram &gt; 30)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃ステートに遷移する。</font></li>
+                            <li></span>            <span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState = enEnemyState_Attack;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//乱数が30未満なら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//待機ステートに遷移する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_enemyState = enEnemyState_Idle;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span>   </li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーを見つけられなければ。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//待機ステートに遷移する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_enemyState = enEnemyState_Idle;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        これで、ステート遷移の処理は以上です。
+                    </div>
+                 </div>
+            </div>
+            <li id="3"><h2 class="margin-letter2">9.3 Playerの発見</h2></li>
+            <div class="letter">
+                <div>
+                    先ほどのプログラムで、「SearchPlayer」という関数が出てきました。この関数で「Player」が発見できたかどうかを判断するのですが、まだこの関数は未実装です。
+                    なので、次はSearchPlayer関数の処理を追加していきます。
+                    <div class="margin-letter">
+                        処理を追加する前に、問題です。<span class="strong-letter">「Player」を発見している、とはどういう状況でしょうか。</span>
+                        プログラムに落とし込むには、具体的な数値や計算が必要になってきます。少し考えてみてください。
+                    </div>
+                    <div class="margin-letter3">
+                        今回の実装では、
+                        <ul>
+                            <li><span class="strong-letter">PlayerとEnemyの距離が一定以内。</span></li>
+                            <li><span class="strong-letter">PlayerがEnemyの視野角内にいる。</span></li>
+                        </ul>
+                        の2つを満たせば、「Player」を発見しているという風にしたいと思います。
+                        では、SearchPlayer関数に下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::SearchPlayer()</font></li>
+                            <li></li>
+                            <li>const bool Enemy::SearchPlayer() const</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エネミーからプレイヤーに向かうベクトルを求める。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 diff = m_player-&gt;GetPosition() - m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーにある程度近かったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (diff.LengthSq() &lt;= 700.0 * 700.0f)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エネミーからプレイヤーに向かうベクトルを正規化(大きさを1)する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">diff.Normalize();</span>        </li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エネミーの正面のベクトルと、エネミーからプレイヤーに向かうベクトルの。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//内積(cosθ)を求める。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">float cos = m_forward.Dot(diff);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//内積(cosθ)から角度(θ)を求める。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">float angle = acosf(cos);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//角度(θ)が120°(視野角)より小さければ。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (angle &lt;= (Math::PI / 180.0f) * 120.0f)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーを見つけた！</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return true;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//プレイヤーを見つけられなかった。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return false;</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してください。「Player」が「Enemy」の視界に入ると、何らかの挙動をするようになったと思います。
+                        <br>先ほどの視野角判定処理は、以下のようになっています。
+                    </div>
+                    <div class="margin-letter">
+                        <img src="sprite/action9/8_1.png" class="margin-letter">
+                    </div>
+                    <div class="margin-letter">
+                        <br><span class="strong-letter">2つのベクトルの内積を計算すると、cosθを求める</span>ことができます。さらに、<span class="strong-letter">arcos(cosθ)を計算すれば、θを求める</span>ことができます。
+                        このように2つのベクトルのなす角を求めます。
+                        <br><a href="https://w3e.kanazawa-it.ac.jp/math/category/vector/henkan-tex.cgi?target=/math/category/vector/naiseki-wo-fukumu-kihonsiki.html">2つのベクトルのなす角</a>
+                    </div>
+                </div>
+            </div>
+            <li id="4"><h2 class="margin-letter2">9.4 追跡</h2></li>
+            <div class="letter">
+                <div>
+                    最後に、「Player」を追跡する処理を追加しましょう。Enemy.cppのProcessCommonStateTransition関数とChase関数に下記のコードを追加してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::SearchPlayer()</font></li>
+                            <li></li>
+                            <li>void Enemy::Chase()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//追跡ステートでないなら、追跡処理はしない。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (m_enemyState != enEnemyState_Chase)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エネミーを移動させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime-&gt;GetFrameDeltaTime());</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (m_charaCon.IsOnGround()) {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//地面についた。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//重力を0にする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_moveSpeed.y = 0.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 modelPosition = m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ちょっとだけモデルの座標を挙げる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">modelPosition.y += 2.5f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_modelRender.SetPosition(modelPosition);</span></li>
+                            <li>}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>void Enemy::ProcessCommonStateTransition()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//各タイマーを初期化。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//待機時間と追跡時間を制限するため。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_idleTimer = 0.0f;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_chaseTimer = 0.0f;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エネミーからプレイヤーに向かうベクトルを計算する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 diff = m_player-&gt;GetPosition() - m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーを見つけたら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (SearchPlayer() == true)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ベクトルを正規化する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">diff.Normalize();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//移動速度を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_moveSpeed = diff * 250.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//乱数によって、追跡させるか魔法攻撃をするか決定する。&nbsp;&nbsp;&nbsp;&nbsp;</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int ram = rand() % 100;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        出来たら、実行してみてください。追跡するようになっているでしょうか。
+                    </div>
+                    <div class="margin-letter">
+                        追跡する際の移動速度の計算は以下の通りです。
+                        <ol>
+                            <li>「Enemy」から「Player」に向かうベクトルと求める。</li>
+                            <li>前述のベクトルを正規化する。</li>
+                            <li>正規化したベクトルに定数を乗算する。</li>
+                        </ol>
+                    </div>
+                    <div class="margin-letter">
+                        この章では、ベクトルの話が出てきました。今回のようなオブジェクト制御だけでなく、グラフィックスな話にもベクトルは大いに関わってくるので、<span class="strong-letter">不安な学生はベクトルの復習をしておくとよいでしょう。</span>
+                    </div>
+                </div>
+            </div>
+            <li id="5"><h2 class="margin-letter2">9.5 まとめ</h2></li>
+            <div class="letter">
+                <div>
+                    <ul>
+                        <li>ベクトルは大事です。</li>
+                    </ul>
+                </div>
+            </div>
+            <li id="6"><h2 class="margin-letter2">9.6 Tips 早期リターン(上級者向け)</h2></li>
+            <div class="letter">
+                <div>
+                    プログラムを書く際に、if-else文が出てきた時は<span class="strong-letter">「早期リターン」</span>を活用しては如何でしょうか。
+                    早期リターンとは、<span class="strong-letter">関数の処理の途中で値が確定した時点でreturnを使用することで、if分のネストを減らすテクニック</span>です。
+                    ネストを減らすということは、簡単にいうとif文の中にif文を書くことを減らすということです。
+                    <div class="margin-letter">
+                        まずは、早期リターンを使用せずに書いたプログラムを見てみましょう。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//エアコンを付けるかどうかの判断をする。</font></li>
+                            <li>function test(temp,humidity)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//温度が25度より上なら</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (temp &gt; 25)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//湿度が60より上なら</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(humidity&gt;60)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"冷房を付ける"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"何もしない"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;else if (temp &lt; 10)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"暖房を付ける"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;else</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"何もしない"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        次に、早期リターンを使用したプログラムを見てみましょう。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//エアコンを付けるかどうかの判断をする。</font></li>
+                            <li>function test(temp,humidity)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(temp &lt;=25 &amp;&amp; temp &gt;= 10)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"なにもしない"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(temp &lt; 10)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"暖房を付ける"</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(humidity&gt;60)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"冷房を付ける"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return <font style="color:lightcoral;">"何もしない"</font>;</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        下のプログラムでは、早期リターンを使用することでかなりスッキリしたものになっているのではないでしょうか。
+                        今回の「Enemy」のプログラムでも、早期リターンを使用することで、else文を使用せずネストを減らしています。
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+</body>

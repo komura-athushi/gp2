@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 第十章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+<body>
+    <div id="box">
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+    </script>
+    <div class="title">
+        <h1>第十章 Enemyの実装(後編)</h1>
+    </div>
+    <div class="letter-body">
+        <ul id="list1">
+            <div>
+                <h3>この章で学ぶこと</h3>
+                <h5>
+                  <ul><li><span class="strong-letter">値渡し・ポインタ渡し・参照渡し(上級者向け)</span></li>
+                  </ul>
+                </h5>
+            </div>
+            <li id="1"><h2 class="margin-letter2">10.1 Enemy側の通常攻撃</h2></li>
+            <div class="letter">
+                <div>
+                    この章では、残りの「Enemy」の実装をしていきます。
+                    まず、通常攻撃を実装していきましょう。「Player」とほぼ同じなので、出来る人はコードを見ずにやってみてください。
+                    <br>まず、アニメーションイベントを設定しましょう(Enemyのモデルには既にアニメーションキーが設定されています)。それでは、Enemy.hと.cppに下記のコードを追加してください。
+                    <div class="margin-letter">
+                    <code>
+                        <ol class="code-region row col-11">
+                        <li><font style="color:lightgreen;font-style:italic;">//Enemy.h</font></li>
+                        <li></li>
+                        <li>class Enemy : public IGameObject</li>
+                        <li>{</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;summary&lt;</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// ダウンステートの遷移処理。</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;/summary&gt;</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;void ProcessDownStateTransition();</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;summary&gt;</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// 攻撃できる距離かどうか調べる。</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;/summary&gt;</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">/// &lt;returns&gt;攻撃できるならtrue。&lt;/returns&gt;</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;const bool IsCanAttack() const;</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">/// &lt;summary&gt;</span></font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">/// アニメーションイベント用の関数。</span></font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">/// &lt;/summary&gt;</span></font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">/// &lt;param name="clipName"&gt;アニメーションの名前。&lt;/param&gt;</span></font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">/// &lt;param name="eventName"&gt;アニメーションイベントのキーの名前。&lt;/param&gt;</span></font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">void OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName);</span></li>
+                        <li></li>
+                        <li></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;enum EnAnimationClip {</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                        <li>}</li>
+                        </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::Start()/Enemy::OnAnimationEvent()</font></li>
+                            <li></li>
+                            <li>bool Enemy::Start()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//アニメーションイベント用の関数を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_modelRender.AddAnimationEvent([&amp;](const wchar_t* clipName, const wchar_t* eventName) </span>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">OnAnimationEvent(clipName, eventName);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">});</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">void Enemy::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)</span></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_start」の時。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (wcscmp(eventName, L<font style="color:lightcoral;">"attack_start"</font>) == 0) {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃中判定をtrueにする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_isUnderAttack = true;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//効果音を再生する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">SoundSource* se = NewGO&lt;SoundSource&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Init(3);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Play(false);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;SetVolume(0.8f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_end」の時。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else if (wcscmp(eventName, L<font style="color:lightcoral;">"attack_end"</font>) == 0) {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"> <font style="color:lightgreen;font-style:italic;">//攻撃中判定をfalseにする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_isUnderAttack = false;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//キーの名前が「magic_attack」の時。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else if (wcscmp(eventName, L<font style="color:lightcoral;">"magic_attack"</font>) == 0) {</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ファイヤーボールのオブジェクトを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">MakeFireBall();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        次に、通常攻撃のエフェクトを追加しましょう。
+                        Enemy.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::Start()/Enemy::OnAnimationEvent()</font></li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//CollisionObjectを使用したいため、ファイルをインクルードする。</font></li>
+                            <li>#include <font style="color:lightcoral;">"collision/CollisionObject.h"</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//EffectEmitterを使用したいため、ファイルをインクルードする。</span></font></li>
+                            <li><span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">#include <font style="color:lightcoral;">"graphics/effect/EffectEmitter.h"</font></span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>bool Enemy::Start()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//アニメーションイベント用の関数を設定する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.AddAnimationEvent([&amp;](const wchar_t* clipName, const wchar_t* eventName) {</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OnAnimationEvent(clipName, eventName);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;});</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エフェクトを読み込む。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">EffectEngine::GetInstance()-&gt;ResistEffect(1, u<font style="color:lightcoral;">"Assets/effect/efk/enemy_slash_01.efk"</font>);</li>
+                            <li></span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>void Enemy::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//キーの名前が「attack_start」の時。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if(wcscmp(eventName, L<font style="color:lightcoral;">"attack_start"</font>) == 0)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃中判定をtrueにする。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_isUnderAttack = true;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//効果音を再生する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(3);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(0.8f);</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃エフェクトを発生させる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">EffectEmitter* effectEmitter = NewGO&lt;EffectEmitter&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;Init(1);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//大きさを設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;SetScale(Vector3::One * 12.0f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 effectPosition = m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を少し上にする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectPosition.y += 70.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;SetPosition(effectPosition);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Quaternion rotation;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">rotation = m_rotation;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">rotation.AddRotationDegY(360.0f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//回転を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;SetRotation(rotation);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エフェクトを再生する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">effectEmitter-&gt;Play();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        続いて、通常攻撃に当たり判定を追加しましょう。
+                        まず、Enemy.hとEnemy.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.h</font></li>
+                            <li></li>
+                            <li>class Enemy : public IGameObject</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;float           m_chaseTimer = 0.0f;                <font style="color:lightgreen;font-style:italic;">//追跡タイマー。                </font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;float           m_idleTimer = 0.0f                  <font style="color:lightgreen;font-style:italic;">//待機タイマー。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">int             m_swordBoneId = -1;                 <font style="color:lightgreen;font-style:italic;">//剣のボーンのID。</span></font></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::Start()/Enemy::MakeAttackCollision()</font></li>
+                            <li></li>
+                            <li>bool Enemy::Start()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//エフェクトを読み込む。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;EffectEngine::GetInstance()-&gt;ResistEffect(1, u<font style="color:lightcoral;">"Assets/effect/efk/enemy_slash_01.efk"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//剣のボーンのIDを取得する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_swordBoneId = m_modelRender.FindBoneID(L<font style="color:lightcoral;">"Sword"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                            <li>}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</li>
+                            <li>void Enemy::MakeAttackCollision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//攻撃当たり判定用のコリジョンオブジェクトを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">auto collisionObject = NewGO&lt;CollisionObject&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//剣のボーンのワールド行列を取得する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Matrix matrix = m_modelRender.GetBone(m_swordBoneId)-&gt;GetWorldMatrix();</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ボックス状のコリジョンを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;CreateBox(m_position, Quaternion::Identity, Vector3(100.0f, 10.0f, 10.0f));</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;SetWorldMatrix(matrix);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">collisionObject-&gt;SetName(<font style="color:lightcoral;">"enemy_attack"</font>);</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        最後に、「Player」側の当たり判定処理を追加しましょう。Player.cppに下記のコードを追加してください。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Player.cpp/Player::Collision()</font></li>
+                            <li></li>
+                            <li>void Player::Collision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//被ダメージ、ダウン中、クリア時はダメージ判定をしない。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (m_playerState == enPlayerState_ReceiveDamage ||</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_playerState == enPlayerState_Down ||</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_playerState == enPlayerState_Clear)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//敵の攻撃用のコリジョンの配列を取得する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"enemy_attack"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//配列をfor文で回す。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">for (auto collision : collisions)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンとキャラコンが衝突したら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (collision-&gt;IsHit(m_charaCon))</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPを減らす。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_hp -= 1;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPが0になったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (m_hp == 0)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ダウンさせる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_playerState = enPlayerState_Down;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPが0ではなかったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else </span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//被ダメージリアクションをさせる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_playerState = enPlayerState_ReceiveDamage;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//効果音を再生する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">SoundSource* se = NewGO&lt;SoundSource&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Init(7);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Play(false);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;SetVolume(0.7f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    できたら、実行してください。通常攻撃が実装できているでしょうか。
+                </div>
+            </div>
+            <li id="2"><h2 class="margin-letter2">10.2 Enemy側の魔法攻撃</h2></li>
+            <div class="letter">
+                <div>
+                    では、続いて「Enemy」の魔法攻撃を追加していきます。Enemy.cppのMakeFireBall関数に下記のコードを追加してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::MakeFireBall()</font></li>
+                            <li></li>
+                            <li>void Enemy::MakeFireBall()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ファイヤーボールのオブジェクトを作成する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">FireBall* fireBall = NewGO&lt;FireBall&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">Vector3 fireBallPosition = m_position;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を少し上にする。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBallPosition.y += 70.0f;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//座標を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBall-&gt;SetPosition(fireBallPosition);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//回転を設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBall-&gt;SetRotation(m_rotation);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//術者をエネミーに設定する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">fireBall-&gt;SetEnMagician(FireBall::enMagician_Enemy);</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    ,<div class="margin-letter">
+                        最後に、「Player」側の当たり判定処理を追加しましょう。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Enemy::MakeFireBall()</font></li>
+                            <li></li>
+                            <li>void Player::Collision()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//被ダメージ、ダウン中、クリア時はダメージ判定をしない。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (m_playerState == enPlayerState_ReceiveDamage ||</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_playerState == enPlayerState_Down ||</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;m_playerState == enPlayerState_Clear)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//敵の攻撃用のコリジョンの配列を取得する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"enemy_attack"</font>);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//配列をfor文で回す。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;for (auto collision : collisions)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//コリジョンとキャラコンが衝突したら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (collision-&gt;IsHit(m_charaCon))</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPを減らす。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_hp -= 1;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPが0になったら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (m_hp == 0)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ダウンさせる。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_playerState = enPlayerState_Down;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPが0ではなかったら。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else </li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//被ダメージリアクションをさせる。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_playerState = enPlayerState_ReceiveDamage;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//効果音を再生する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(7);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(0.7f);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//敵の撃ったファイヤーボールのコリジョンの配列を取得する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">const auto&amp; collisions2 = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"enemy_fireball"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//配列をfor文で回す。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">for (auto collision : collisions2)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//コリジョンとキャラコンが衝突したら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (collision-&gt;IsHit(m_charaCon))</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPを減らす。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_hp -= 1;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPが0になったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">if (m_hp == 0)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ダウンさせる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_playerState = enPlayerState_Down;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//HPが0ではなかったら。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">else </span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//被ダメージリアクションをさせる。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">m_playerState = enPlayerState_ReceiveDamage;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//効果音を再生する。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">SoundSource* se = NewGO&lt;SoundSource&gt;(0);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Init(7);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;Play(false);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">se-&gt;SetVolume(0.7f);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">return;</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        できたら、実行してください。魔法攻撃がされているでしょうか。
+                    </div>
+                </div>
+            </div>
+            <li id="3"><h2 class="margin-letter2">10.3 delete</h2></li>
+            <div class="letter">
+                <div>
+                    最後に、ステージ上の様々なオブジェクトが生成されてそのままになっているので、削除するようにしましょう。
+                    <br>Game.cppに下記のコードを追加してください。
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//Enemy.cpp/Game::~Game()</font></li>
+                            <li></li>
+                            <li>Game::~Game()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//色々なオブジェクトを削除する。</font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;DeleteGO(m_gameCamera);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;DeleteGO(m_skyCube);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;DeleteGO(m_player);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;DeleteGO(m_background);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;DeleteGO(m_bgm);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//レバーを削除。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">for (auto lever : m_leverVector)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">DeleteGO(lever);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ドアを削除。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">for (auto door : m_doorVector)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">DeleteGO(door);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//エネミーを削除。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">const auto&amp; enemys = FindGOs&lt;Enemy&gt;(<font style="color:lightcoral;">"enemy"</font>);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">for (auto enemy : enemys)</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">{</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">DeleteGO(enemy);</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">}</span></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;"><font style="color:lightgreen;font-style:italic;">//ボスを削除。</span></font></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(210,255,61);border-bottom:solid 1px rgb(210,255,61);font-weight:bold;">DeleteGO(FindGO&lt;Boss&gt;(<font style="color:lightcoral;">"boss"</font>));</span></li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                    <div class="margin-letter">
+                        以上で、ゲームプログラミング2は終了となります。この教材で学んだことが、少しでも皆さんのゲーム制作の役に立てれば幸いです。
+                    </div>
+                </div>
+            </div>
+            <li id="4"><h2 class="margin-letter2">10.4 Tips 値渡し・ポインタ渡し・参照渡し(上級者向け)</h2></li>
+            <div class="letter">
+                <div>
+                    こちらの記事で詳しい説明がなされています。  
+                    <br><a href="https://qiita.com/agate-pris/items/05948b7d33f3e88b8967">C++ 値渡し、ポインタ渡し、参照渡しを使い分けよう</a>
+                    <div class="margin-letter">
+                        <br>C++では、関数に値を渡す方法が、3つ存在します。それぞれ<span class="strong-letter">「値渡し」、「ポインタ渡し」、「参照渡し」</span>です。
+                        それぞれのざっくりとした違いです。
+                        <ul>
+                            <li><span class="strong-letter">値渡し</span></li>
+                            値のコピーが発生する、元値に影響がない。
+                            <li><span class="strong-letter">ポインタ渡し、参照渡し</span></li>
+                            値のコピーが発生しない、元値に影響がある。
+                        </ul>
+                    </div>
+                    <div class="margin-letter">
+                        以上の違いを踏まえると、値渡しではコピーが発生するので、<span class="strong-letter">クラス・構造体・配列のようなサイズの大きい値はポインタ渡し・参照渡し</span>で行うべきでしょう。
+                        <br>また、<span class="strong-letter">int型のような小さいサイズの場合は、値渡し</span>で十分です。
+                    </div>
+                    <div class="margin-letter">
+                        <code>
+                            <ol class="code-region row col-11">
+                            <li><font style="color:lightgreen;font-style:italic;">//値渡し</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//こちらでは値のコピーが発生するため、要素数10000の配列をコピーする処理が発生してしまう。</font></li>
+                            <li>void test1(std::vector&lt;int&gt; numberlist)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;for(int i = 0;i&lt;numberlist.size();i++)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout &lt;&lt; numberlist[i] &lt;&lt; <font style="color:lightcoral;">"\n"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li></li>
+                            <li>}</li>
+                            <li></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//参照渡し</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//こちらでは値のコピーが発生しない。</font></li>
+                            <li><font style="color:lightgreen;font-style:italic;">//また、元値を変更しない・してはいけないのであれば、constを付けよう。</font></li>
+                            <li>voidtest2(const std::vector&lt;int&gt;&amp; numberlist)</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;for(int i = 0;i&lt;numberlist.size();i++)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout &lt;&lt; numberlist[i] &lt;&lt; <font style="color:lightcoral;">"\n"</font>;</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li></li>
+                            <li>}</li>
+                            <li></li>
+                            <li>int main()</li>
+                            <li>{</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;int&gt; numberlist:</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;for(int i =0;i &lt; 10000;i++)</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                            <li></li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberlist.push_back(i);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;display1(numberlist);</li>
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;display2(numberlist);</li>
+                            <li>}</li>
+                            </ol></code>
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+</body>

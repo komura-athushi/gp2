@@ -1,11 +1,11 @@
 html {
-    font-size: 70.0%;
+    font-size: 80.0%;
 }
 
 
 @media (min-width: 650px){
     html{
-        font-size: 100%;
+        font-size: 110%;
     }
     .letter-body{
         margin-left: 10% !important;
@@ -18,7 +18,7 @@ html {
 
 @media (min-width: 1100px){
     html{
-        font-size: 110%;
+        font-size: 120%;
     }
     .letter-body{
         margin-left: 20% !important;
@@ -64,6 +64,10 @@ html {
 
 .margin-letter2{
     margin-top: 5%;
+}
+
+.margin-letter3{
+    margin-top: 50rem;
 }
 
 .letter{
