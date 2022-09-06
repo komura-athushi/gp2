@@ -38,6 +38,10 @@ html {
     font-size: 1.5rem;
 }
 
+.link-font2{
+    font-size: 1.0rem;
+}
+
 .title{
     margin-top: 5%;
     display: flex;
@@ -118,6 +122,10 @@ img {
     justify-content: center!important;
     align-items: center!important;
 }
+.justify-left{
+    display: flex;
+    justify-content: flex-end!important;
+}
 
 .margin-left{
     margin-left: 10%;
@@ -138,4 +146,18 @@ img {
 .error-answer
 {
     background-color:#FF9999;
+}
+
+.fiexd-content
+{
+    position: fixed;
+}
+
+.tablecontents
+{
+    
+    display: flex;
+    justify-content: flex-end!important;
+    flex-direction:column!important;
+    flex-wrap: wrap!important;
 }

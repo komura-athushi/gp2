@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 外伝二章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+    <body>
+      <div id="box">
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+      </script>
+      <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+      </script>
+      <div class="title">
+        <h1>外伝二章 Visual Studioの活用法</h1>
+      </div>
+      <div class="letter-body">
+        <ul id="list1">
+          <div>
+            <h3>この章で学ぶこと</h3>
+            <h5>
+              <ul><li><span class="strong-letter">インクルードディレクトリ</span></li>
+                <li><span class="strong-letter">文字検索、置き換え</span></li>
+              </ul>
+            </h5>
+          </div>
+          <li id="1"><h2 class="margin-letter2">Ex2.1 インクルードディレクトリ</h2></li>
+          <div class="letter">
+            <div>
+                この章では、Visual Studioの様々な活用方法を紹介する。
+                <div class="margin-letter">
+                    <span class="strong-letter">インクルードディレクトリ</span>は下記のようなものである。
+                    プロジェクト→プロパティを選択する。
+                </div>
+                <div>
+                    <img src="sprite/extra2/1.png" class="margin-letter">
+                </div>
+                <div class="margin-letter">
+                    インクルードディレクトリを設定すると、<span class="strong-letter">設定したディレクトリのファイルをインクルード</span>できるようになる。
+                    <br>例えば、
+                </div> 
+                <div class="margin-letter">
+                    <code>
+                        <ol class="code-region row col-11">
+                        <li>#include <font style="color:lightcoral;">"Enemy/Enemy.h"</font></li>
+                        </ol>
+                    </code>
+                </div>
+                <div class="margin-letter">
+                    と記述したとする。
+                    <br>この際、インクルードディレクトリを下記のように設定すると、
+                </div>
+                <div>
+                    <img src="sprite/extra2/2.png" class="margin-letter">
+                </div>
+                <div class="margin-letter">
+                    <code>
+                        <ol class="code-region row col-11">
+                        <li>#include <font style="color:lightcoral;">"Enemy.h"</font></li>
+                        </ol></code>
+                </div>
+                <div class="margin-letter">
+                    上記のように記述することができる。
+                    <br>k2Engineでも、<span class="strong-letter">Gameプロジェクトのインクルードディレクトリにエンジン部分のディレクトリを設定</span>している。
+                </div>
+            </div>
+          </div>
+          <li id="2"><h2 class="margin-letter2">Ex2.2 Ctrl+F、Ctrl+H</h2></li>
+          <div class="letter">
+            <div>
+                <span class="strong-letter">Ctrl+Fで文字検索</span>、<span class="strong-letter">Ctrl+Hで文字置き換え</span>ができる。
+                <div>
+                    <img src="sprite/extra2/3.png" class="margin-letter">
+                    <br><img src="sprite/extra2/4.png" class="margin-letter">
+                </div>
+                <div class="margin-letter">
+                    この文字検索機能を活用した事例を1つ紹介する。
+                    <br>未実装・実装途中の部分に「//to do」などとコメントをする。
+                </div>
+                <div>
+                    <img src="sprite/extra2/5.png" class="margin-letter">
+                </div>
+                <div class="margin-letter">
+                    すると、下記のように未実装・実装途中の箇所を文字検索で検索することができる。
+                </div>
+                <div class="margin-letter">
+                    <img src="sprite/extra2/6.png" class="margin-letter">
+                </div>
+                <div class="margin-letter">
+                    是非、活用してみて欲しい。
+                </div>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </body>
+</html>

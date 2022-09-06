@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 外伝一章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+    <body>
+      <div id="box">
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+      </script>
+      <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+      </script>
+      <div class="title">
+        <h1>外伝一章 様々なC++の機能</h1>
+      </div>
+      <div class="letter-body">
+        <ul id="list1">
+          <div>
+            <h3>この章で学ぶこと</h3>
+            <h5>
+              <ul><li><span class="strong-letter">スマートポインタ</span></li>
+                <li><span class="strong-letter">template</span></li>
+                <li><span class="strong-letter">inline関数</span></li>
+                <li><span class="strong-letter">map</span></li>
+              </ul>
+            </h5>
+          </div>
+          <li id="1"><h2 class="margin-letter2">Ex1.1 スマートポインタ</h2></li>
+          <div class="letter">
+            <div>
+                C++でゲーム制作をすると、一定の評価が得られる。それは、C++という言語が、他の言語(python、C#等)と比べてやや複雑だからである。そのようなC++の機能を一部紹介する。
+                <br><br>この記事に全部書いてます。
+                <br><a href="https://qiita.com/hmito/items/9b35a2438a8b8ee4b5af">C++20スマートポインタ入門</a>
+                <div class="margin-letter">
+                    読むのがめんどい人向け
+                    <ul>
+                        <li><span class="strong-letter">deleteが要らないポインタ</span>。</li>
+                        <li><span class="strong-letter">所有権という概念</span>がある(所有権が破棄されれば、自動でメモリ解放が行われる)。</li>
+                        <li>unique_ptr、shared_ptr、weak_ptrの三種類がある。</li>
+                        <li>基本は、<span class="strong-letter">unique_ptr</span>を使用しよう。</li>
+                        <li><span class="strong-letter">メモリリーク</span>(delteし忘れ)をこれで防ごう。</li>
+                    </ul>
+                </div>
+                <div class="margin-letter">
+                    <code>
+                        <ol class="code-region row col-11">
+                        <li>void Level2DRender::AddMapChip2DRender(Level2DObjectData* objData)</li>
+                        <li>{</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//スマートポインタを作成するには、std::make_○○関数を使用する。</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//スマートポンタは、deleteをする必要がない。</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;auto mapChip2DPtr = std::make_unique&lt;MapChip2DRender&gt;();</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;mapChip2DPtr.get()-&gt;Init(objData);</li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//std::unique_ptrの所有権を移動させる時は、std::move()を使う。</font></li>
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;m_mapChip2DRenderPtrList.push_back(std::move(mapChip2DPtr));</li>
+                        <li>}</li>
+                        </ol></code>
+                </div>
+                <div class="margin-letter">
+                  尚、newやdeleteのようにユーザが動的にメモリを確保している領域を、<span class="strong-letter">ヒープ領域</span>という。
+                  ヒープ領域から使用されなくなったメモリを自動解放する機能のことを、<span class="strong-letter">ガベージコレクタ</span>といい、スマートポインタがこれに当たる。
+                </div>
+            </div>
+          </div>
+          <li id="2"><h2 class="margin-letter2">Ex1.2 template</h2></li>
+          <div class="letter">
+            <div>
+              この記事に全部書いてます。
+              <br><a href="https://qiita.com/hal1437/items/b6deb22a88c76eeaf90c">適当なC++テンプレート入門</a>
+              <br><a href="https://docs.microsoft.com/ja-jp/cpp/cpp/templates-cpp?view=msvc-170">テンプレート (C++)</a>
+              <div class="margin-letter">
+                読むのがめんどい人向け
+                <ul>
+                  <li>ユーザーが指定した任意の型に基づいて、変数や関数を生成する機能</li>
+                  <li>k2EngineのNewGO関数で使用されている(&lt;Player&gt;のように型指定ができる)。</li>
+                </ul>
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row col-11">
+                      <li><font style="color:lightgreen;font-style:italic;">/*!</li>
+                      <li>*@brief&nbsp;&nbsp;&nbsp;&nbsp;ゲームオブジェクト生成のヘルパー関数。</li>
+                      <li>*@param[in]&nbsp;&nbsp;&nbsp;&nbsp;priority&nbsp;&nbsp;&nbsp;&nbsp;プライオリティ。</li>
+                      <li>*@param[in]&nbsp;&nbsp;&nbsp;&nbsp;objectName&nbsp;&nbsp;&nbsp;&nbsp;オブジェクト名。(NULLの指定可）</li>
+                      <li>*/</font></li>
+                      <li>template&lt;class T&gt;</li>
+                      <li>static inline T* NewGO(int priority, const char* objectName = nullptr)</li>
+                      <li>{</li>
+                      <li>&nbsp;&nbsp;&nbsp;&nbsp;return GameObjectManager::GetInstance()-&gt;NewGameObject&lt;T&gt;(priority, objectName);</li>
+                      <li>}</li>
+                      </ol></code>
+              </div>
+            </div>
+          </div>
+          <li id="3"><h2 class="margin-letter2">Ex1.3 inline関数</h2></li>
+          <div class="letter">
+            <div>
+              こちらをどうぞ。
+              <br><a href="https://yttm-work.jp/lang/cpp/cpp_0013.html">インライン関数の基本</a>
+              <div class="margin-letter">
+                <ul>
+                  <li>通常の関数呼び出しでは、その関数先に移動して処理を行う(<span class="strong-letter">オーバーヘッド</span>とも言われる、間接的なコストが発生)。</li>
+                  <li>インライン関数では、呼び出された箇所に関数が展開される(前述のオーバーヘッドはないが、ファイルサイズ増大のデメリット)。</li>
+                  <li>関数の規模が小さい場合(3行程度)は、inline関数にしよう。</li>
+                </ul>
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row col-11">
+                  <li>class Player : public IGameObject</li>
+                  <li>{</li>
+                  <li>public:</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">////////////////////////////////////</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">// メンバ関数</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">////////////////////////////////////</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;Player();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;~Player();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;bool Start();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;void Update();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;void Render(RenderContext&amp; rc);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//これがinline関数。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//クラス内で関数を定義すると、inline関数になる。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;void SetPosition(const Vector3&amp; position)</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_position = position;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  </ol></code>
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row col-11">
+                  <li><font style="color:lightgreen;font-style:italic;">//レベルを構築する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;m_level.Init(<font style="color:lightcoral;">"Assets/level/sample.tkl"</font>, [&amp;](LevelObjectData&amp; objData) {</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (objData.EqualObjectName(L<font style="color:lightcoral;">"unityChan"</font>) == true) </li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player = NewGO&lt;Player&gt;(0, <font style="color:lightcoral;">"player"</font>);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ここの部分に注目。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;SetPosition(objData.position);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;SetRotation(objData.rotation);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//trueにすると、レベルの方でモデルが読み込まれない。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  </ol></code>
+              </div>
+              <div class="margin-letter">
+                inline関数だと、関数呼び出しの際に上記のコードは
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row col-11">
+                  <li><font style="color:lightgreen;font-style:italic;">//レベルを構築する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;m_level.Init(<font style="color:lightcoral;">"Assets/level/sample.tkl"</font>, [&amp;](LevelObjectData&amp; objData) {</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (objData.EqualObjectName(L<font style="color:lightcoral;">"unityChan"</font>) == true) </li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player = NewGO&lt;Player&gt;(0, <font style="color:lightcoral;">"player"</font>);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//お分かり頂けただろうか。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//関数呼び出し先に、関数の定義内容が展開される。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;m_position = objData.position;</li>
+                  <li></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_player-&gt;SetRotation(objData.rotation);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//trueにすると、レベルの方でモデルが読み込まれない。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  </ol></code>
+              </div>
+              <div class="margin-letter">
+                となる。
+              </div>
+            </div>
+          </div>
+          <li id="3"><h2 class="margin-letter2">Ex1.4 map</h2></li>
+          <div class="letter"> 
+            <div>
+              こちらをどうぞ。
+              <br><a href="https://qiita.com/_EnumHack/items/f462042ec99a31881a81">std::mapまとめ</a>
+              <br><a href="https://wa3.i-3-i.info/word11931.html">連想配列とは</a>
+              <div class="margin-letter">
+                まとめ
+                <ul>
+                  <li>mapとは、<span class="strong-letter">連想配列</span>である。</li>
+                  <li>連想配列とは、<span class="strong-letter">配列の添え字に任意の文字を設定できる配列</span>のようなものである。</li>
+                  <li>よほどのことが無い限り、unordered_mapを使用しよう。</li>
+                </ul>
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row col-11">
+                  <li><font style="color:lightgreen;font-style:italic;">//std::stringがkey(添え字)、intがvalue(値)である。</font></li>
+                  <li>std::unordered_map&lt;std::string, int&gt; fruitMap;</li>
+                  <li>fruitMap[<font style="color:lightcoral;">"apple"</font>] = 5;</li>
+                  <li>fruitMap[<font style="color:lightcoral;">"banana"</font>] = 10;</li>
+                  <li>fruitMap[<font style="color:lightcoral;">"watermelon"</font>] = 15;</li>
+                  <li></li>
+                  <li><font style="color:lightgreen;font-style:italic;">//5</font></li>
+                  <li>std::cout &lt;&lt; fruitMap[<font style="color:lightcoral;">"banana"</font>] &lt;&lt; std::endl;</li>
+                  <li><font style="color:lightgreen;font-style:italic;">//10</font></li>
+                  <li>std::cout &lt;&lt; fruitMap[<font style="color:lightcoral;">"apple"</font>] &lt;&lt; std::endl;</li>
+                  </ol></code>
+              </div>
+            </div>
+          </div>
+        </ul>
+    </div>
+</body>
