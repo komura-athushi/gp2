@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ゲームプログラミング2 外伝三章</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/template.css">
+    <script src="template.js"></script>
+  </head>
+
+    <body>
+      <div id="box">
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+      </script>
+      <script>
+        jQuery(function(){
+          $('#box').load('header.html') // #headerにheader.htmlを読み込む
+        });
+      </script>
+      <div class="title">
+        <h1>外伝四章 k2SLEditor</h1>
+      </div>
+      <div class="letter-body">
+        <ul id="list1">
+          <div>
+            <h3>この章で学ぶこと</h3>
+            <h5>
+              <ul><li><span class="strong-letter">k2SLEditor</span></li>
+              </ul>
+            </h5>
+          </div>
+          <li id="1"><h2 class="margin-letter2">Ex4.1 k2SLEditorとは</h2></li>
+          <div class="letter">
+            <div>
+                <span class="strong-letter">k2Engineを用いてのゲーム開発における画像配置のサポート(ゲームをいちいち実行しなくても、画像がどのように表示されるかわかります)</span>や、<span class="strong-letter">画像ファイルのdds変換をするツール</span>である。
+            </div>
+          </div>
+          <li id="2"><h2 class="margin-letter2">Ex4.2 説明</h2></li>
+          <div class="letter">
+            <div>
+                <ol>
+                    <div class="margin-letter">
+                        <h5><li>ツールの起動</li></h5>
+                        tools/k2SLEditor/k2SLEditor.exeからツールを起動。
+                        <div class="margin-letter">
+                            <img src="sprite/extra4/1.png" class="margin-letter">
+                            <img src="sprite/extra4/2.png" class="margin-letter">
+                        </div>
+                    </div>
+                    <div class="margin-letter">
+                        <h5><li>画面説明</li></h5>
+                        大まかなツールの説明
+                        <div>
+                            <img src="sprite/extra4/3.png" class="margin-letter">
+                        </div>
+                    </div>
+                    <div class="margin-letter">
+                        <h5><li>使い方</li></h5>
+                        画像ファイルを読み込んで、配置します。
+                        <div>
+                            <img src="sprite/extra4/4.png" class="margin-letter">
+                            <img src="sprite/extra4/5.png" class="margin-letter">
+                        </div>
+                        <div class="margin-letter">
+                            <span class="strong-letter">k2Engineでのゲーム制作で、画像詳細欄の通りに値を設定すると、k2SLEditorと同じように画像が表示</span>されます。  
+                        </div>
+                        <div>
+                            <img src="sprite/extra4/6.png" class="margin-letter">
+                            <img src="sprite/extra4/7.png" class="margin-letter">
+                        </div>
+                    </div>
+                    <div class="margin-letter">
+                        <h5><li>画像の詳細</li></h5>
+                        <div>
+                            <img src="sprite/extra4/9.png" class="margin-letter">
+                        </div>
+                    </div>
+                    <div class="margin-letter">
+                        <h5><li>dds変換</li></h5>
+                        「ファイル」→「レベル書き出し」を選択。
+                        適当なフォルダを選んで保存すると、ddsファイルが出力されている。
+                        <div class="margin-letter">
+                            <img src="sprite/extra4/10.png" class="margin-letter">
+                            <br><img src="sprite/extra4/11.png" class="margin-letter">
+                            <br><img src="sprite/extra4/12.png" class="margin-letter">
+                        </div>
+                    </div>
+                </ol>
+            </div>
+          </div>
+          <li id="3"><h2 class="margin-letter2">Ex4.3 開発環境</h2></li>
+          <div class="letter">
+            <div>
+                <ul>
+                    <li>開発環境</li>
+                    Windows10
+                    <br>Visual Studio Code
+                    <li>使用言語</li>
+                    Python
+                    <li>使用したPythonライブラリ</li>
+                    Pyinstaller、tkinter、PIL(Pillow) その他
+                    <li>ソース</li>
+                    toolsProj/k2SLEditorProjにPythonのソースコードが入ってます。
+                    <div>
+                        <img src="sprite/extra4/13.png" class="margin-letter">
+                    </div>
+                    <li>製作期間</li>
+                    2～3ヶ月
+                </ul>
+            </div>
+          </div>
+          <li id="4"><h2 class="margin-letter2">Ex4.4 ツール制作のススメ</h2></li>
+          <div class="letter">
+            <div>
+                就活で、ツール作りました！はアピールになることもあります。
+            </div>
+          </div>
+        </ul>
+      </div>
+    </body>
+</html>
