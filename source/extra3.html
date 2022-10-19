@@ -20,191 +20,186 @@
         });
       </script>
       <div class="title">
-        <h1>外伝三章 オブジェクト指向</h1>
+        <h1>外伝三章 読みやすいコード</h1>
       </div>
       <div class="letter-body">
         <ul id="list1">
           <div>
             <h3>この章で学ぶこと</h3>
             <h5>
-              <ul><li><span class="strong-letter">オブジェクト指向てなに</span></li>
+              <ul><li><a href="https://ubiquitous-pasca-5b05b5.netlify.app/index.html">デザインパターンについて(3年生向け)</a></li>
               </ul>
             </h5>
           </div>
-          <li id="1"><h2 class="margin-letter2">Ex3.1 オブジェクト指向とは</h2></li>
+          <li id="1"><h2 class="margin-letter2">Ex3.1 読みやすいコードはなぜ必要か</h2></li>
           <div class="letter">
             <div>
-                <ul>
-                    オブジェクト指向とは ＿＿＿＿＿＿＿ 抽象化である(異論は認める)。
-                    <br><a href="https://qiita.com/nrslib/items/73bf176147192c402049">オブジェクト指向のいろは</a>
-                    <div class="margin-letter">
-                        <li><h4>抽象化てなんやねん</h4></li>
-                        <span class="strong-letter">具体的な処理を、関数やクラスにぶち込むこと！！</span>
-                        <br>以下のコードを見てみよう。
-                    </div>
-                    <div class="margin-letter">
-                        <code>
-                            <ol class="code-region row col-11">
-                            <li>void Boss::Update()</li>
-                            <li>{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (m_bossState == enBossState_Chase)</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime-&gt;GetFrameDeltaTime());</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (m_charaCon.IsOnGround()) {</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//地面についた。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_moveSpeed.y = 0.0f;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector3 modelPosition = m_position;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ちょっとだけモデルの座標を挙げる。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modelPosition.y += 2.5f;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetPosition(modelPosition);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;if (fabsf(m_moveSpeed.x) &gt; 0.001f</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&amp; fabsf(m_moveSpeed.z) &gt; 0.001f) {</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//atan2はtanθの値を角度(ラジアン単位)に変換してくれる関数。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//m_moveSpeed.x / m_moveSpeed.zの結果はtanθになる。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//atan2を使用して、角度を求めている。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//これが回転角度になる。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float angle = atan2(-m_moveSpeed.x, m_moveSpeed.z);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//atanが返してくる角度はラジアン単位なので</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//SetRotationDegではなくSetRotationを使用する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_rotation.SetRotationY(-angle);</li>
-                            <li></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転を設定する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetRotation(m_rotation);</li>
-                            <li></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーの前ベクトルを計算する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_forward = Vector3::AxisZ;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_rotation.Apply(m_forward);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーの攻撃用のコリジョンを取得する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"player_attack"</font>);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//コリジョンの配列をfor文で回す。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (auto collision : collisions)</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//コリジョンとキャラコンが衝突したら。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (collision-&gt;IsHit(m_charaCon))</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPを1減らす。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_hp -= 1;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPが0になったら。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (m_hp == 0)</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ダウンステートに遷移する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_bossState = enBossState_Down;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else {</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//被ダメージステートに遷移する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_bossState = enBossState_ReceiveDamage;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//効果音を再生する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(4);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(0.4f);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//プレイヤーのファイヤーボール用のコリジョンを取得する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const auto&amp; collisions = g_collisionObjectManager-&gt;FindCollisionObjects(<font style="color:lightcoral;">"player_fireball"</font>);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//for文で配列を回す。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (auto collision : collisions)</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//コリジョンとキャラコンが衝突したら。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (collision-&gt;IsHit(m_charaCon))</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPを1減らす。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_hp -= 1;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//HPが0になったら。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (m_hp == 0)</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ダウンステートに遷移する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_bossState = enBossState_Down;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else {</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//被ダメージステートに遷移する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_bossState = enBossState_ReceiveDamage;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//効果音を再生する。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SoundSource* se = NewGO&lt;SoundSource&gt;(0);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Init(4);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;Play(false);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;se-&gt;SetVolume(0.6f);</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">///まだまだ続く</font></li>
-                            <li>}</li>
-                            </ol></code>
-                    </div>
-                    <div class="margin-letter">
-                        1つの関数に色々な処理を詰め込みすぎて、読む気が失せるのではないだろうか。
-                        では、この関数の処理を抽象化してみよう。
-                    </div>
-                    <div class="margin-letter">
-                        <code>
-                            <ol class="code-region row col-11">
-                            <li>void Boss::Update()</li>
-                            <li>{</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//追跡処理。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Chase();</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転処理。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Rotation();</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//当たり判定。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Collision();</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃処理。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;Attack();</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//アニメーションの再生。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;PlayAnimation();</li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ステートの遷移処理。</font></li>
-                            <li>&nbsp;&nbsp;&nbsp;&nbsp;ManageState();</li>
-                            <li>}</li>
-                            </ol></code>
-                    </div>
-                    <div class="margin-letter">
-                        修正前より圧倒的に見やすくなったのではないだろうか。
-                        これが抽象化である。
-                        <br>デザインパターンとは、<span class="strong-letter">抽象化をどのように行うか</span>ということを記したものである(個人の見解です)。
-                    </div>
-                    <div class="margin-letter">
-                        <li><h4>抽象化のメリットは？？</h4></li>
-                        <span class="strong-letter">可読性</span>、<span class="strong-letter">保守性(システムの維持・改良性)</span>、<span class="strong-letter">再利用性(使いまわし)</span>の向上等が上げられる。
-                        可読性に関しては上記で説明した通りである。保守性に関しては、可読性が高い方がメンテナンスがし易いだろう。また、処理を関数化・クラス化することで、同じ処理を様々な箇所で行うことが容易になる。
-                        <div class="margin-letter">
-                            これらのオブジェクト指向化におけるメリットは、<span class="strong-letter">小規模開発・個人開発では恩恵を感じにくい</span>。
-                            しかし、<span class="strong-letter">大規模開発・チーム開発では、これらのメリットは開発において多大なる恩恵</span>を君たちにもたらしてくれることだろう。
-                        </div>
-                        <div class="margin-letter">
-                            チーム開発では、他人が担当したプログラムを見たり修正したりする場面があるだろう。大規模開発では、自分が書いたコードの内容を忘れることがあるだろう。
-                            想像してみて欲しい。1つのクラス・関数に処理がずらーーーーーーーーーーと書かれているところを。そこで発生しているバグ修正して欲しいと言われた時、あなたはプログラム作成者に怒りを覚えるだろう。
-                            どこでなにやってるかわかんねーーーーーよ！！と。
-                        </div>
-                        <div class="margin-letter">
-                            是非プログラムを書く時には、<span class="strong-letter">"抽象化"</span>を意識してみて欲しい。それは、あなただけでなくチームメンバーにも恩恵をもたらしてくれるだろう。皆ハッピー、抽象化最強！！
-                        </div>
-                        <div class="margin-letter2">
-
-                        </div>
-                        <div class="margin-letter">
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                          <a href="https://ubiquitous-pasca-5b05b5.netlify.app/index.html">デザインパターンについて(3年生向け)</a>
-                          <br><a href="https://qiita.com/akurobit">何か参考になれば嬉しいです。</a>
-                        </div>
-                    </div>
-                </ul>
+              <span class="strong-letter">ゲーム開発は基本的に多人数かつ長期的</span>に行われるものである。
+              故に、<span class="strong-letter">他人が見ても後から見ても読みやすいコードが必要</span>なのである。
+              <br>専門学校で諸君らが行うゲーム制作は基本1～4人程度であるが、実際の商業用ゲームの開発はもっと大人数かつ何年もかけて開発していることを頭に入れておこう。
+              <span class="strong-letter">自分以外の人が見てもわかるようなコードを書こう！</span>
+            </div>
+          </div>
+          <li id="2"><h2 class="margin-letter2">Ex3.2 変数名・関数名・クラス名に気を付けよう</h2></li>
+          <div class="letter">
+            <div>
+              突然だが、以下のコードを見て欲しい。どういう処理をしているか分かるだろうか。
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row coll-11">
+                  <li>A::B()</li>
+                  <li>{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;C();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;D.E(F);</li>
+                  <li>}</li>
+                  </ol></code>
+              </div>
+              <div class="margin-letter">
+                何をしているか分からないであろう。
+                それは、変数名・関数名・クラス名をしっかりと命名していなかったからである。
+                <span class="strong-letter">変数名・関数名・クラス名は役割に応じて命名</span>しよう。
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row coll-11">
+                  <li>Player::Update()</li>
+                  <li>{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;Move();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetPosition(m_position);</li>
+                  <li>}</li>
+                  </ol></code>
+              </div>
+            </div>
+          </div>
+          <li id="3"><h2 class="margin-letter2">Ex3.3 関数化をしよう</h2></li>
+          <div class="letter">
+            <div>
+              例えば、Bossクラスを実装していたとしよう。
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row coll-11">
+                  <li>void Boss::Update()</li>
+                  <li>{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;if (m_bossState == enBossState_Chase)</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime-&gt;GetFrameDeltaTime());</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (m_charaCon.IsOnGround()) {</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_moveSpeed.y = 0.0f;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vector3 modelPosition = m_position;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modelPosition.y += 2.5f;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetPosition(modelPosition);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;if (fabsf(m_moveSpeed.x) &gt; 0.001f</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&amp; fabsf(m_moveSpeed.z) &gt; 0.001f) {</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float angle = atan2(-m_moveSpeed.x, m_moveSpeed.z);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_rotation.SetRotationY(-angle);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetRotation(m_rotation);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_forward = Vector3::AxisZ;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_rotation.Apply(m_forward);</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//....</font></li>
+                  <li>}</li>
+                  </ol></code>
+              </div>
+              <div class="margin-letter">
+                1つの関数に、移動・回転etc...など様々な処理が混ざっていて非常に読みづらい。
+                なので、移動・回転などの<span class="strong-letter">処理ごとに関数化</span>して、その関数を呼び出すようにしよう。
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row coll-11">
+                  <li>void Boss::Update()</li>
+                  <li>{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//追跡処理。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;Chase();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//回転処理。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;Rotation();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//当たり判定。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;Collision();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//攻撃処理。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;Attack();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//アニメーションの再生。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;PlayAnimation();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ステートの遷移処理。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;ManageState();</li>
+                  <li>}</li>
+                  </ol></code>
+              </div>
+            </div>
+          </div>
+          <li id="4"><h2 class="margin-letter2">Ex3.4 コメントを書こう</h2></li>
+          <div class="letter">
+            <div>
+              コメントがあるとコードの可読性が上がるので、<span class="strong-letter">こまめにコメントを書く</span>ようにしよう！
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row coll-11">
+                  <li><font style="color:lightgreen;font-style:italic;">//プレイヤーの更新処理。</font></li>
+                  <li>Player::Update()</li>
+                  <li>{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//移動処理。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;Move();</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//モデルに座標を設定する。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;m_modelRender.SetPosition(m_position);</li>
+                  <li>}</li>
+                  </ol></code>
+              </div>
+            </div>
+          </div>
+          <li id="5"><h2 class="margin-letter2">Ex3.5 マジックナンバーを無くそう</h2></li>
+          <div class="letter">
+            <div>
+              <span class="strong-letter">マジックナンバーとは、ソースコードに直に記述された数値</span>のことである。
+              以下のコードの、500.0fや9.8fがマジックナンバーにあたる。
+              <div class="margin-letter">
+                <code>
+                  <ol class="code-region row coll-11">
+                  <li>Player::Move()</li>
+                  <li>{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//Bボタンが押されたら。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;if (PressButton(ButtonB))</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ジャンプさせる。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_moveSpeed.y = 500.0f;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//重力。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;m_moveSpeed.y -= 9.8f;</li>
+                  <li>}</li>
+                  </ol></code>
+              </div>
+              <div class="margin-letter">
+                このようなマジックナンバーは無くした方がいいのである。
+                理由は2つある。1つ目が、<span class="strong-letter">数値だけではその値が何を意味するのか分からない</span>ことあるからである。
+                2つ目が、<span class="strong-letter">変更がしづらいという点</span>である。上記の例だと、ジャンプ速度を変更するには500.0fという値を変更しなければならないのだが、いちいちPlayerのMove関数の該当箇所に...という作業をしなければならない。
+                また、この500.0fという値を複数個所で使用している場合、変更箇所が複数箇所に及んでしまう。
+                <br>なので、<span class="strong-letter">数値は定数化してマジックナンバーを無くす</span>ようにしよう。
+              </div>
+              <div class="margin-letter">
+                <code>
+                  <ol style="list-style:decimal-leading-zero outside;in-left:0;padding-left:36px;margin:0;background-color:#000;color:#FFF;">
+                  <li><font style="color:lightgreen;font-style:italic;">//各数値を定数化する。</font></li>
+                  <li><font style="color:lightgreen;font-style:italic;">//ジャンプ速度。</font></li>
+                  <li>const float JUMP_SPEED = 500.0f;</li>
+                  <li><font style="color:lightgreen;font-style:italic;">//重力。</font></li>
+                  <li>const float GRAVITY = 9.8f;</li>
+                  <li></li>
+                  <li>Player::Move()</li>
+                  <li>{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//Bボタンが押されたら。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;if (PressButton(ButtonB))</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;{</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//ジャンプさせる。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_moveSpeed.y = JUMP_SPEED;</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;}</li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:lightgreen;font-style:italic;">//重力。</font></li>
+                  <li>&nbsp;&nbsp;&nbsp;&nbsp;m_moveSpeed.y -= GRAVITY;</li>
+                  <li>}</li>
+                  </ol></code>
+              </div>
             </div>
           </div>
         </ul>
-    </div>
-</body>
-</html>
+      </div>
+    </body>
+  </html>
